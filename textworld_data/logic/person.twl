@@ -1,55 +1,56 @@
-# person
-type pr : t{
+# text-Like
+type pr : t {
     predicates {
-        attacked(pr);
+        not_asked(pr);
         asked(pr);
-	not_asked(pr);
+        attacked(pr);
     }
-
 
     rules {
         attack/pr   :: $at(P, r) & $at(pr, r) -> attacked(pr);
         ask/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_asked(pr) -> asked(pr);
     }
-
+    
     constraints {
-    # Predicate conflicts
-    	pr1 :: asked(pr) & not_asked(pr) -> fail();
+        pr1 :: asked(pr) & not_asked(pr) -> fail();
     }
 
     inform7 {
-
-        
         type {
-            kind :: "person";
-            definition :: "Person can be attacked. Person can be asked. Person is fixed in place.";
+            kind :: "person-like";
+            definition :: "person-like can be attacked. person-like can be asked. person-like is fixed in place.";
         }
 
         predicates {
-            attacked(pr) :: "The {pr} is attacked";
+            attacked(pr)  :: "The {pr} is attacked";
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
         }
 
-        commands {
-            attack/pr :: "attack {pr}" :: "_attacking {pr}";
-            ask/pr :: "ask {pr} about the bank robbery" :: "_asking the {pr}";
+        commands {            
+            attack/pr :: "attack the {pr}" :: "_attacking the {pr}";
+            ask/pr :: "ask the {pr}" :: "_asking the {pr}";
         }
-	code :: """
-            Understand the command "attack" as something new.
-            Understand "attack [something]" as _attacking.
-            _attacking is an action applying to a thing.
+        
+        code :: """
+            Understand the command "ask" as something new. 
+            Understand "ask [something]" as _asking. 
+            _asking is an action applying to a thing. 
+        
+            Carry out _asking: 
+                if a person-like (called tx) is not asked: 
+                    Say "The person is being asked about the bank robbery.";
+                    Now the tx is asked; 
+            After _asking: 
+                say "[the noun] has given the information. he said go north.";
 
-            After _attacking a person:
-		say "[the noun] is being attacked.";
-            
-            Understand the command "ask" as something new.
-            Understand "ask [something]" as _asking.
-            _asking is an action applying to a thing.
-
-            After _asking a person:
-		say "[the noun] has given the information. he said go north.";
-           """;
-	
+            Understand the command "attack" as something new. 
+            Understand "attack [something]" as _attacking. 
+            _attacking is an action applying to a thing. 
+        
+            Carry out _attacking the person-like(called tx): 
+                Say "The person is being being attacked.";
+                Now the tx is asked; 
+        """;
     }
 }
