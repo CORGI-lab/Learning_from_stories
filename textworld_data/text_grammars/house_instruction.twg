@@ -3,7 +3,7 @@
 #-------------------------
 obj_types:(o|k|f)
 obj_types_no_key:(o|f)
-obj_types_things:(pr)
+obj_types_things:(pr|t)
 on_types:(c|s)
 lock_types:(c|d)
 eat_types:(f)
@@ -26,6 +26,12 @@ dice:dice the #obj_types#
 chop:chop the #obj_types#
 slice:slice the #obj_types#
 cook:cook the #obj_types#
+stamp: stamp the #obj_types_things#
+stamp/pr:stamp the #obj_types_things#
+stamp/t:stamp the #obj_types_things#
+ask/pr:ask the #obj_types_things#
+aid/pr:aid the #obj_types_things#
+aid:aid the #obj_types_things#
 ask/pr:ask the #obj_types_things#
 take:#take_synonym_1# the #obj_types# in the (r).;#take_synonym_1# the #obj_types# from the (r).;#take_synonym_1# the #obj_types# that's in the (r).
 take_synonym_1:take;retrieve;recover;pick up

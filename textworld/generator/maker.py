@@ -703,7 +703,7 @@ class GameMaker:
                 game_file = self.compile(pjoin(tmpdir, "record_event.ulx"))
                 recorder = Recorder()
                 agent = textworld.agents.WalkthroughAgent(commands)
-                textworld.play(game_file, agent=agent, wrappers=[recorder], silent=True)
+                textworld.play(game_file, agent=agent, wrappers=[recorder], silent=False)
             except textworld.agents.WalkthroughDone:
                 pass  # Quest is done.
 

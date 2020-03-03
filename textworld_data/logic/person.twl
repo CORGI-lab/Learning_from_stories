@@ -5,23 +5,25 @@ type pr : t {
         asked(pr);
         attacked(pr);
         stressed(pr);
+        not_aided(pr);
+        not_stressed(pr);
         aided(pr);
     }
 
     rules {
         ask/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_asked(pr) -> asked(pr);
-        aid/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & stressed(pr) -> aided(pr);
+        aid/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_aided(pr) -> aided(pr);
     }
 
     constraints {
         pr1 :: asked(pr) & not_asked(pr) -> fail();
-        pr2 :: aided(pr) & stressed(pr) -> fail();
+        pr2 :: aided(pr) & not_aided(pr) -> fail();
     }
 
     inform7 {
         type {
             kind :: "person-like";
-            definition :: "person-like can be attacked. person-like can be asked. person-like can be stressed. person-like is usually not stressed. person-like can be aided. person-like is usually not aided. person-like is fixed in place.";
+            definition :: "person-like can be attacked. person-like can be asked. person-like can be stressed. person-like can be aided. person-like can be not aided. person-like is fixed in place.";
         }
 
         predicates {
@@ -30,24 +32,26 @@ type pr : t {
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
             stressed(pr) :: "The {pr} is stressed";
+            not_stressed(pr) :: "The {pr} is not stressed";
+            not_aided(pr) :: "The {pr} is not aided";
         }
 
-        commands {            
+        commands {
             attack/pr :: "attack the {pr}" :: "_attacking the {pr}";
             ask/pr :: "ask the {pr}" :: "_asking the {pr}";
             aid/pr :: "aid the {pr}" :: "_aiding the {pr}";
         }
-        
+
         code :: """
             [Asking]
             Understand the command "ask" as something new. 
             Understand "ask [something]" as _asking. 
             _asking is an action applying to a thing. 
-        
+
             Carry out _asking: 
                 if a person-like (called tx) is not asked: 
-                    Say "The person is being asked about the bank robbery.";
-                    Now the tx is asked; 
+                    say "The person is being asked about the bank robbery.";
+                    Now the tx is asked;
             After _asking: 
                 Say "[the noun] has given the information. he said go north.";
 
@@ -55,10 +59,10 @@ type pr : t {
             Understand the command "aid" as something new. 
             Understand "aid [something]" as _aiding. 
             _aiding is an action applying to a thing. 
-        
+
             Carry out _aiding: 
-                if a person-like (called tx) is stressed: 
-                    Say "You help the person with their problem.";
+                if a person-like (called tx) is not aided: 
+                    say "You help the person with their problem.";
                     Now the tx is aided; 
             After _aiding: 
                 Say "They appreciate your help.";
