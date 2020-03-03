@@ -4,35 +4,42 @@ type pr : t {
         not_asked(pr);
         asked(pr);
         attacked(pr);
+        stressed(pr);
+        aided(pr);
     }
 
     rules {
-        attack/pr   :: $at(P, r) & $at(pr, r) -> attacked(pr);
         ask/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_asked(pr) -> asked(pr);
+        aid/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & stressed(pr) -> aided(pr);
     }
-    
+
     constraints {
         pr1 :: asked(pr) & not_asked(pr) -> fail();
+        pr2 :: aided(pr) & stressed(pr) -> fail();
     }
 
     inform7 {
         type {
             kind :: "person-like";
-            definition :: "person-like can be attacked. person-like can be asked. person-like is fixed in place.";
+            definition :: "person-like can be attacked. person-like can be asked. person-like can be stressed. person-like is usually not stressed. person-like can be aided. person-like is usually not aided. person-like is fixed in place.";
         }
 
         predicates {
             attacked(pr)  :: "The {pr} is attacked";
+            aided(pr) :: "The {pr} is aided";
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
+            stressed(pr) :: "The {pr} is stressed";
         }
 
         commands {            
             attack/pr :: "attack the {pr}" :: "_attacking the {pr}";
             ask/pr :: "ask the {pr}" :: "_asking the {pr}";
+            aid/pr :: "aid the {pr}" :: "_aiding the {pr}";
         }
         
         code :: """
+            [Asking]
             Understand the command "ask" as something new. 
             Understand "ask [something]" as _asking. 
             _asking is an action applying to a thing. 
@@ -42,15 +49,19 @@ type pr : t {
                     Say "The person is being asked about the bank robbery.";
                     Now the tx is asked; 
             After _asking: 
-                say "[the noun] has given the information. he said go north.";
+                Say "[the noun] has given the information. he said go north.";
 
-            Understand the command "attack" as something new. 
-            Understand "attack [something]" as _attacking. 
-            _attacking is an action applying to a thing. 
+            [Helping]
+            Understand the command "aid" as something new. 
+            Understand "aid [something]" as _aiding. 
+            _aiding is an action applying to a thing. 
         
-            Carry out _attacking the person-like(called tx): 
-                Say "The person is being being attacked.";
-                Now the tx is asked; 
+            Carry out _aiding: 
+                if a person-like (called tx) is stressed: 
+                    Say "You help the person with their problem.";
+                    Now the tx is aided; 
+            After _aiding: 
+                Say "They appreciate your help.";
         """;
     }
 }
