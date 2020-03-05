@@ -4,6 +4,7 @@
 obj_types:(o|k|f)
 obj_types_no_key:(o|f)
 obj_types_things:(pr)
+obj_types_rob:(rbr)
 on_types:(c|s)
 lock_types:(c|d)
 eat_types:(f)
@@ -27,6 +28,9 @@ chop:chop the #obj_types#
 slice:slice the #obj_types#
 cook:cook the #obj_types#
 ask/pr:ask the #obj_types_things#
+shoot/rbr :: shoot the #obj_types_rob#
+beat/rbr :: beat the #obj_types_rob#
+convince/rbr :: convince the #obj_types_rob#
 take:#take_synonym_1# the #obj_types# in the (r).;#take_synonym_1# the #obj_types# from the (r).;#take_synonym_1# the #obj_types# that's in the (r).
 take_synonym_1:take;retrieve;recover;pick up
 take/s:#take_synonym_1# the #obj_types# from the #on_var#.
