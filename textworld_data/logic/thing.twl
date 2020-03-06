@@ -1,24 +1,17 @@
 # thing
-type t {
+type t : object {
     predicates {
         sharp(t);
         cuttable(t);
         cookable(t);
         drinkable(t);
-        stamped(t);
-        not_stamped(t);
-        stampless(t);
-    }
-
-    rules {
-        examine/t :: at(P, r) & $at(t, r) -> at(P, r);
-        stamp/t :: at(P, r) & $at(t, r) -> at(P, r);
     }
 
     inform7 {
+
         type {
             kind :: "thing";
-            definition :: "thing can be drinkable. thing is usually not drinkable. thing can be cookable. thing is usually not cookable. thing can be stamped. thing can be not stamped. thing can be stampless. a thing can be damaged. a thing is usually not damaged. a thing can be sharp. a thing is usually not sharp. a thing can be cuttable. a thing is usually not cuttable. a thing can be a source of heat. Type of cooking is a kind of value. The type of cooking are raw, grilled, roasted and fried. a thing can be needs cooking. Type of cutting is a kind of value. The type of cutting are uncut, sliced, diced and chopped.";
+            definition :: "thing can be portable. thing can be on something. thing can be drinkable. thing is usually not drinkable. thing can be cookable. thing is usually not cookable. a thing can be damaged. a thing is usually not damaged. a thing can be sharp. a thing is usually not sharp. a thing can be cuttable. a thing is usually not cuttable. a thing can be a source of heat. Type of cooking is a kind of value. The type of cooking are raw, grilled, roasted and fried. a thing can be needs cooking. Type of cutting is a kind of value. The type of cutting are uncut, sliced, diced and chopped.";
         }
 
         predicates {
@@ -26,31 +19,15 @@ type t {
             cookable(t) :: "The {t} is cookable";
             cuttable(t) :: "The {t} is cuttable";
             drinkable(t) :: "The {t} is drinkable";
-            stampable(t) :: "The {t} is stampable";
-            stamped(t) :: "The {t} is stamped";
-            not_stamped(t) :: "The {t} is not stamped";
-            stampless(t) :: "The {t} is stampless";
         }
 
         commands {
             examine/t :: "examine {t}" :: "examining the {t}";
-            stamp/t :: "stamp {t}" :: "stamping the {t}";
         }
 
-        code :: """
-            Understand the command "stamp" as something new. 
-            Understand "stamp [something]" as stamping. 
-            stamping is an action applying to a thing. 
-
-            Carry out stamping: 
-                if a thing (called tx) is not stamped: 
-                    say "You stamp it.";
-                    Now the tx is stamped; 
-            After stamping: 
-                Say "It is marked with your stamp.";
-        """;
     }
 }
+
 
 type object {
     inform7 {
