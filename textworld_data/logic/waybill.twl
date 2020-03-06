@@ -1,10 +1,14 @@
-# text-like
-type fo : o {
+#thing-like
+type fo : t {
     predicates {
         stampable(fo);
         stamped(fo);
-        not_stamped(fo);
         stampless(fo);
+        not_stamped(fo);
+    }
+
+    rules {
+        stamp/fo :: $at(P, r) & $in(fo, I) -> stamped(fo);
     }
 
     constraints {
@@ -13,33 +17,32 @@ type fo : o {
 
     inform7 {
         type {
-            kind :: "waybill-like";
-            definition :: "a waybill-like can be stamped. a waybill-like can be not stamped. a waybill-like can be stampless.";
+            kind :: "waybill";
+            definition :: "a waybill can be stamped. a waybill is portable. a waybill can be on something. a waybill is usually not stamped. a waybill can be stampable. a waybill can be stampless.";
         }
 
         predicates {
             stampable(fo) :: "The {fo} is stampable";
             stamped(fo) :: "The {fo} is stamped";
-            not_stamped(fo) :: "The {fo} is not stamped";
             stampless(fo) :: "The {fo} is stampless";
+            not_stamped(fo) :: "The {fo} is not stamped";
         }
 
         commands {
-            examine/fo :: "examine {fo}" :: "examining the {fo}";
-            stamp/fo :: "stamp {fo}" :: "stamping the {fo}";
+            stamp/fo :: "stamp {fo}" :: "_stamping the {fo}";
         }
 
         code :: """
             Understand the command "stamp" as something new. 
-            Understand "stamp [something]" as stamping. 
-            stamping is an action applying to a thing. 
+            Understand "stamp [something]" as _stamping. 
+            _stamping is an action applying to a thing. 
 
-            Carry out stamping: 
-                if a waybill-like (called tx) is not stamped: 
+            Carry out _stamping: 
+                if a waybill (called tx) is not stamped: 
                     say "You stamp it.";
                     Now the tx is stamped; 
-            After stamping: 
-                Say "It is marked with your stamp.";
+            After _stamping: 
+                Say "It is now stamped.";
         """;
     }
 }

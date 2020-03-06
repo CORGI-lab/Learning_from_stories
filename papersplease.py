@@ -60,7 +60,7 @@ def capture_stdout():
 
 def _compile_test_game(game):
 	grammar_flags = {
-		"theme": "clerk",
+		"theme": "house",
 		"include_adj": False,
 		"only_last_action": True,
 		"blend_instructions": True,
@@ -129,34 +129,40 @@ def build_and_compile_papersplease():
 	# sits down, slams the table ... reject people who are violent, lying, giving bribes
 
 	M = GameMaker()
-	counter = M.new_room("Behind counter")
-	lobby = M.new_room("Lobby")
-	outside = M.new_room("outside the clerk shop")
-	storage = M.new_room("storage closet")
-	office = M.new_room("my office")
 
-	c1 = M.connect(outside.south, lobby.north)
-	c2 = M.connect(counter.west, lobby.east)
-	c3 = M.connect(counter.south, storage.north)
-	c4 = M.connect(counter.east, office.west)
-
-	door1 = M.new_door(c1, name="front door")
-	door2 = M.new_door(c2, name="employee door")
-	door3 = M.new_door(c3, name="storage door")
-	door4 = M.new_door(c4, name="my office door")
-
-	M.add_fact("locked", door2)
-	key = M.new(type="k", name="employee key")  # Create a 'k' (i.e. key) object. 
-	M.add_fact("match", key, door2)
-	M.inventory.add(key)
-
+	counter = M.new_room("counter")
+	lobby = M.new_room("lobby")
+	outside = M.new_room("outside")
+	storage = M.new_room("storage")
+	office = M.new_room("office")
 	M.set_player(outside)
-	obj = M.new(type='o', name="cell phone")  # New portable object with a randomly generated name.
-	obj.infos.desc = "This is your cellphone. There is a missed call from your partner and many texts from your brother."
+	c1 = M.connect(outside.south, lobby.north)
+	c2 = M.connect(counter.north, lobby.south)
+	c3 = M.connect(counter.east, storage.west)
+	c4 = M.connect(counter.west, office.east)
 
-	M.inventory.add(obj)  # Add the object to the player's inventory.
+	# door1 = M.new_door(c1, name="glass door")
+	# door2 = M.new_door(c2, name="iron door")
+	# door3 = M.new_door(c3, name="maple door")
+	# door4 = M.new_door(c4, name="pine door")
+
+	# outside.add(door1)
+	# lobby.add(door2)
+	# counter.add(door3)
+	# counter.add(door4)
+
+	# M.add_fact("locked", door2)
+	# key = M.new(type="k", name="iron key")  # Create a 'k' (i.e. key) object. 
+	# M.add_fact("match", key, door2)
+	# M.inventory.add(key)
+
+	
+	#obj = M.new(type='t', name="cell phone")  # New portable object with a randomly generated name.
+	#obj.infos.desc = "This is your cellphone. There is a missed call from your partner and many texts from your brother."
+
+	#M.inventory.add(obj)  # Add the object to the player's inventory.
 	#M.render()
-
+	outside.infos.desc = "You are now outside your office. There is a door."
 	counter.infos.desc = "You are now behind your counter."
 	lobby.infos.desc = "This is the clerk office lobby."
 	office.infos.desc = "This is your office. There's not much here aside from a desk with your work on it."
@@ -167,36 +173,36 @@ def build_and_compile_papersplease():
 	supporter = M.new(type='s', name = "desk")  # When not provided, names are automatically generated.
 	#office.add(supporter)  # Supporters are fixed in place.
 	supporter.infos.desc = "It is a metal sturdy table. There are many forms on the table that take longer to process."
-	supporter2 = M.new(type='s', name = "my counter")  # When not provided, names are automatically generated.
+	supporter2 = M.new(type='s')  # When not provided, names are automatically generated.
 	  # Supporters are fixed in place.
 	supporter2.infos.desc = "It is a metal sturdy table. There is some clutter and things which need processing. A person is waiting in front of it despite there being a 'next counter' sign."
 
-	doodad = M.new(type="t", name = 'doodad') 
-	doodad.infos.desc = "It's a strange looking item. Who could need one of these? You know they are normally placed on a display out front."
+	#doodad = M.new(type="o", name = 'doodad') 
+	#doodad.infos.desc = "It's a strange looking item. Who could need one of these? You know they are normally placed on a display out front."
 	
 	counter.add(supporter2)
 	office.add(supporter)
 
 	form1 = M.new(type="fo", name = 'red waybill') 
 	form1.infos.desc = "It's a waybill."
-	form2 = M.new(type="fo", name = 'blue waybill') 
-	form2.infos.desc = "It's a form."
-	form3 = M.new(type="fo", name = 'green waybill') 
-	form3.infos.desc = "It's a form."
-	form4 = M.new(type="fo", name = 'yellow waybill') 
-	form4.infos.desc = "It's a form."
-	form5 = M.new(type="fo", name = 'orange waybill') 
-	form5.infos.desc = "It's a form."
-	form6 = M.new(type="fo", name = 'purple waybill') 
-	form6.infos.desc = "It's a long form."
-	form7 = M.new(type="fo", name = 'cyan waybill') 
-	form7.infos.desc = "It's a long form."
-	form8 = M.new(type="fo", name = 'pink waybill') 
-	form8.infos.desc = "It's a long form."
-	form9 = M.new(type="fo", name = 'white waybill') 
-	form9.infos.desc = "It's a long form."
+	# form2 = M.new(type="fo", name = 'blue waybill') 
+	# form2.infos.desc = "It's a form."
+	# form3 = M.new(type="fo", name = 'green waybill') 
+	# form3.infos.desc = "It's a form."
+	# form4 = M.new(type="fo", name = 'yellow waybill') 
+	# form4.infos.desc = "It's a form."
+	# form5 = M.new(type="fo", name = 'orange waybill') 
+	# form5.infos.desc = "It's a form."
+	# form6 = M.new(type="fo", name = 'purple waybill') 
+	# form6.infos.desc = "It's a long form."
+	# form7 = M.new(type="fo", name = 'cyan waybill') 
+	# form7.infos.desc = "It's a long form."
+	# form8 = M.new(type="fo", name = 'pink waybill') 
+	# form8.infos.desc = "It's a long form."
+	# form9 = M.new(type="fo", name = 'white waybill') 
+	# form9.infos.desc = "It's a long form."
 	form10 = M.new(type="fo", name = 'black waybill') 
-	form10.infos.desc = "It's a long form."
+	form10.infos.desc = "It's a long waybill."
 	#stove = M.new(type="oven", name = "oven")
 	#stove.infos.desc = "this is an oven. you can cook your food"
 	#supporter.add(food)  # When added directly to a room, portable objects are put on the floor.
@@ -206,80 +212,111 @@ def build_and_compile_papersplease():
 	cw.infos.desc = "This person is your coworker. They look stressed."
 	M.add_fact("not_aided", cw)
 
-	person = M.new(type="pr", name = "confused customer")
+	person = M.new(type="pr", name = "customer")
 	person.infos.desc = "This is a customer waiting at the wrong window."
 	M.add_fact("not_aided", person)
+
+	# chair1 = M.new(type='s', name = "chair")  # When not provided, names are automatically generated.
+	# #office.add(supporter)  # Supporters are fixed in place.
+	# chair1.infos.desc = "It is a wooden chair."
+	# chair2 = M.new(type='s', name = "chair")  # When not provided, names are automatically generated.
+	# #office.add(supporter)  # Supporters are fixed in place.
+	# chair2.infos.desc = "It is a line."
 	#M.add_fact("not_stamped", form)
 	#print(person.properties)
 	#print(form.properties)
+
+	#counter.add(chair1)
+	#counter.add(chair2)
+
 	counter.add(cw)
 	counter.add(person)
 
-	supporter2.add(form1)
-	supporter2.add(form2)
-	supporter2.add(form3)
-	supporter2.add(form4)
-	supporter2.add(form5)
+	office.add(form1)
+	# office.add(form2)
+	# office.add(form3)
+	# office.add(form4)
+	# office.add(form5)
 
-	supporter.add(form6)
-	supporter.add(form7)
-	supporter.add(form8)
-	supporter.add(form9)
-	supporter.add(form10)
+	# office.add(form6)
+	# office.add(form7)
+	# office.add(form8)
+	# office.add(form9)
+	office.add(form10)
 
+	# supporter2.add(form1)
+	# supporter2.add(form2)
+	# supporter2.add(form3)
+	# supporter2.add(form4)
+	# supporter2.add(form5)
+
+	# supporter.add(form6)
+	# supporter.add(form7)
+	# supporter.add(form8)
+	# supporter.add(form9)
+	# supporter.add(form10)
+	food5 = M.new(type="f", name = 'berry') 
+	office.add(food5)
+	food4 = M.new(type="t", name = 'paper') 
+	outside.add(food4)
+	food3 = M.new(type="f", name = 'carrot') 
+	lobby.add(food3)
 	food2 = M.new(type="f", name = 'apple') 
 	supporter.add(food2)
-	#M.add_fact("raw",food)
-	M.add_fact("not_stamped",form1)
-	M.add_fact("not_stamped",form2)
-	M.add_fact("not_stamped",form3)
-	M.add_fact("not_stamped",form4)
-	M.add_fact("not_stamped",form5)
-	M.add_fact("not_stamped",form6)
-	M.add_fact("not_stamped",form7)
-	M.add_fact("not_stamped",form8)
-	M.add_fact("not_stamped",form9)
-	M.add_fact("not_stamped",form10)
+	M.add_fact("raw",food2)
+
+	#M.add_fact("not_stamped",form1)
+	# M.add_fact("not_stamped",form2)
+	# M.add_fact("not_stamped",form3)
+	# M.add_fact("not_stamped",form4)
+	# M.add_fact("not_stamped",form5)
+	# M.add_fact("not_stamped",form6)
+	# M.add_fact("not_stamped",form7)
+	# M.add_fact("not_stamped",form8)
+	# M.add_fact("not_stamped",form9)
+	#M.add_fact("not_stamped",form10)
 	#M.add_fact("on",form1,supporter)
 
 	#counter.add(supporter2)
 	#office.add(supporter)
 
-	quest1_cmds = ["open front door", "go south", "unlock employee door with employee key", "open employee door", "go east", "open my office door", "go east", "examine desk", "stamp black waybill"]
+	quest1_cmds = ["inventory","take paper","go south", "take carrot", "eat carrot", "go south", "go west", "take black waybill", "stamp black waybill"]
 
-	cook_carrot = M.new_event_using_commands(quest1_cmds)
-	eating_carrot = Event(conditions={M.new_fact("aided", person)})
+	q1= M.new_event_using_commands(quest1_cmds)
+	f1 = Event(conditions={M.new_fact("aided", cw)})
 
-	quest1 = Quest(win_events=[cook_carrot],
-				   fail_events=[],
+	quest1 = Quest(win_events=[q1],
+				   fail_events=[f1],
 				   reward=1)
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["open front door", "go south", "unlock employee door with employee key", "open employee door", "go east", "examine counter", "stamp red waybill"]
-	ask_the_informant = M.new_event_using_commands(quest2_cmds)
+	quest2_cmds = ["open glass door", "go south", "unlock iron door with iron key", "open iron door", "go south","open pine door","go west", "stamp red waybill"]
+	q2 = M.new_event_using_commands(quest2_cmds)
 
-	blah = Event(conditions={M.new_fact("stamped", form1)})
+	f2 = Event(conditions={M.new_fact("aided", person)})
 
-	quest2 = Quest(win_events=[ask_the_informant],
-				   fail_events=[blah],
+	quest2 = Quest(win_events=[q2],
+				   fail_events=[f2],
 				   reward=1)
 
-	quest3_cmds = ["go south", "aid customer"]
-	customer_ev = M.new_event_using_commands(quest3_cmds)
+	M.quests.append(quest2)
+
+	#quest3_cmds = ["go south", "aid customer"]
+	#customer_ev = M.new_event_using_commands(quest3_cmds)
 
 
-	quest3 = Quest(win_events=[customer_ev],
-				   fail_events=[blah],
-				   reward=1)
+	#quest3 = Quest(win_events=[customer_ev],
+	#			   fail_events=[blah],
+	#			   reward=1)
 
 	#quest3_cmds = ["go south", "aid customer"]
 
-	quest4_cmds = ["go south", "go east", "go south", "stamp red form", "stamp green form", "stamp yellow form", "stamp blue form"]
+	#quest4_cmds = ["go south", "go east", "go south", "stamp red form", "stamp green form", "stamp yellow form", "stamp blue form"]
 
-	quest4 = Quest(win_events=[customer_ev],
-				   fail_events=[],
-				   reward=1)
+	#quest4 = Quest(win_events=[customer_ev],
+	#			   fail_events=[],
+	#			   reward=1)
 
 	M.quests = [quest1,quest2]
 	

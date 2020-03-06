@@ -1,8 +1,8 @@
 #-------------------------
 #Instructions Grammar
 #-------------------------
-obj_types:(o|k|f)
-obj_types_no_key:(o|f)
+obj_types:(o|k|f|fo|pr)
+obj_types_no_key:(o|f|fo|pr)
 obj_types_things:(pr|t|fo)
 on_types:(c|s)
 lock_types:(c|d)
@@ -27,12 +27,11 @@ chop:chop the #obj_types#
 slice:slice the #obj_types#
 cook:cook the #obj_types#
 stamp:stamp the #obj_types_things#
-stamp/t:stamp the #obj_types_things#
 stamp/fo:stamp the #obj_types_things#
-ask/pr:ask the #obj_types_things#
+ask:ask the #obj_types_things#
 aid:aid the #obj_types_things#
-aid/t:aid the #obj_types_things#
-aid/pr:aid the #obj_types_things#
+ask/pr:ask the #obj_types_things#
+aid/pr:aid the #obj_types_things
 take:#take_synonym_1# the #obj_types# in the (r).;#take_synonym_1# the #obj_types# from the (r).;#take_synonym_1# the #obj_types# that's in the (r).
 take_synonym_1:take;retrieve;recover;pick up
 take/s:#take_synonym_1# the #obj_types# from the #on_var#.
@@ -132,13 +131,13 @@ action_separator_drop: #afterhave# #dropped# #obj_types#, ; #after# #dropping# #
 afterhave:After you have;Having;Once you have;If you have
 havetaken:taken;got;picked up
 havepicked-up:taken;got;picked up
-after:after
-aided:aided
-asked:asked
-stamped:stamped
+after:After;
 taking:taking;getting;picking up;stealing
 picking-up:taking;getting;picking up;stealing
 ate:ate;consumed
+aided:aided
+asked:asked
+stamped:stamped
 inserted:inserted;put in
 inserting:inserting;putting in
 put_v:put;place;set;set down

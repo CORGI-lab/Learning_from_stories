@@ -50,7 +50,7 @@ rest_(r)_adj_type_1:cozy;relaxing;pleasant;sleepy
 rest_(r)_noun_type_2:lounge;bar;parlor;salon;playroom;recreation zone
 rest_(r)_adj_type_2:fun;entertaining;exciting;well lit
 work_(r):#work_(r)_adj# | #work_(r)_noun#
-work_(r)_noun:office;studio;workshop;cubicle;study;counter;lobby
+work_(r)_noun:office;studio;workshop;cubicle;study
 work_(r)_adj:silent;austere;serious;still
 
 hot-adj:super;unreasonably;absurdly;alarmingly;upsettingly
@@ -93,7 +93,6 @@ work_(c)_adj:iron;rusty;ancient
 (pot)_adj:big;metal;old
 (pot)_adj_noun:#(pot)_adj# | #(pot)_noun#
 
-
 # Meal
 #-------------------
 (meal):#(meal)_adj_noun#
@@ -101,7 +100,15 @@ work_(c)_adj:iron;rusty;ancient
 (meal)_adj:delicious;tasty;suspicious
 (meal)_adj_noun:#(meal)_adj# | #(meal)_noun#
 
+aid_(pr):#(pr)_adj_noun#
+aid_(pr)_noun:person;customer;coworker;man;woman
+aid_(pr)_adj:confused,angry,stressed,upset,happy
+aid_(pr)_adj_noun:#(pr)_adj# | #(pr)_noun#
 
+stamp_(fo):#(fo)_adj_noun#
+stamp_(fo)_noun:waybill;form;receipt
+stamp_(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;
+stamp_(fo)_adj_noun:#stamp_(fo)_adj# | #stamp_(fo)_noun#
 
 fruit:watermelon;melon;honeydew;strawberry;apple;pear;grape;kiwi;cantaloupe
 #Doors
@@ -109,9 +116,9 @@ fruit:watermelon;melon;honeydew;strawberry;apple;pear;grape;kiwi;cantaloupe
 #-------------------
 #Etc Etc, but the (r) is now a (d), and you shouldn't create room specific types
 (d):#(d)_adj# | #(d)_noun#
-(d)_adj:#wood_type#;wooden;stone
+(d)_adj:#wood_type#;wooden;stone;employee;office;storage;front
 madeof:made of
-wood_type:oak;birch;maple;balsam;beech;mahogany;walnut;cedar;pine;glass;iron;
+wood_type:oak;birch;maple;balsam;beech;mahogany;walnut;cedar;pine;
 (d)_noun:door;portal;gate;passageway;gateway;hatch
 #Supporters
 # Each roomType must has specific supporters
@@ -133,7 +140,7 @@ rest_(s):#rest_(s)_adj# | #rest_(s)_noun#
 rest_(s)_noun:bed;couch;shelf;bookshelf;desk;bed stand;mantelpiece;mantle;bar;bench;stand;recliner
 rest_(s)_adj:comfy;warm;worn-out
 work_(s):#work_(s)_adj# | #work_(s)_noun#
-work_(s)_noun:stand;bookshelf;table;chair;shelf;desk;mantelpiece;mantle;stand;armchair
+work_(s)_noun:stand;bookshelf;table;chair;shelf;desk;mantelpiece;mantle;stand;armchair;line
 work_(s)_adj:stern;solid;worn;gross
 
 # Objects
@@ -141,8 +148,8 @@ work_(s)_adj:stern;solid;worn;gross
 #-------------------
 #(s) --> (o) Very useful to create multiple subtypes to avoid inappropriate or awkward adjective pairing
 (o):#(o)_adj# | #(o)_noun#
-(o)_noun:pencil;pen
-(o)_adj:new;old;used;dusty;clean;large;small;fancy;plain;ornate;antique;contemporary;modern;dirty;elegant;simple;hefty;modest;austere
+(o)_noun:pencil;pen;
+(o)_adj:new;old;used;dusty;clean;large;small;fancy;plain;ornate;antique;contemporary;modern;dirty;elegant;simple;hefty;modest;austere;
 #clean objects
 clean_(o):#clean_(o)_adj_type_1# | #clean_(o)_noun_type_1#;#clean_(o)_adj_type_2# | #clean_(o)_noun_type_2#;#clean_(o)_adj_type_3# | #clean_(o)_noun_type_3#;#bugobject#
 clean_(o)_noun:#clean_(o)_noun_type_1#;#clean_(o)_noun_type_2#;#clean_(o)_noun_type_3#
@@ -210,7 +217,7 @@ work_(o):#work_(o)_adj_type_1# | #work_(o)_noun_type_1#;#work_(o)_adj_type_2# | 
 work_(o)_noun:#work_(o)_noun_type_1#;#work_(o)_noun_type_2#;#work_(o)_noun_type_3#;#work_(o)_noun_type_4#
 work_(o)_adj:#work_(o)_adj_type_1#;#work_(o)_adj_type_2#;#work_(o)_adj_type_3#;#work_(o)_adj_type_4#
 #utensil
-work_(o)_noun_type_1:pen;pencil;staple;mug;disk;cd;book;backup calendar;waybill
+work_(o)_noun_type_1:pen;pencil;staple;mug;disk;cd;book;backup calendar
 work_(o)_adj_type_1:new;old;used;dusty;clean;large;small;fancy;plain;ornate;dirty;elegant;immaculate;simple;hefty;modest;gaudy;decorated;austere
 #electronic
 work_(o)_noun_type_2:printer;mouse;keyboard;laptop;desktop computer;telephone
@@ -221,10 +228,8 @@ work_(o)_adj_type_3:heartwarming;hilarious;mind-expanding;out of date;typo-riddl
 #device for using another device
 work_(o)_noun_type_4:stapler;printer;mouse;keyboard;folder;binder
 work_(o)_adj_type_4:operational;broken;expensive;useless;outmoded
-work_(o)_noun_type_1:waybill
-work_(o)_adj_type_1:red;blue;green;purple;orange;yellow;black;pink;white;cyan
-work_(o)_noun_type_1:person;customer
-work_(o)_adj_type_1:confused;tired;scared;lost;hurt;annoyed
+
+
 
 
 # Food

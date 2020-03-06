@@ -658,7 +658,7 @@ class GameMaker:
 
         # Skip "None" actions.
         actions = [action for action in recorder.actions if action is not None]
-
+        print(actions)
         # Ask the user which quests have important state, if this is set
         # (if not, we assume the last action contains all the relevant facts)
         winning_facts = None
@@ -708,7 +708,12 @@ class GameMaker:
                 pass  # Quest is done.
 
         # Skip "None" actions.
+
+        print(recorder.actions)
+        print(commands)
+
         actions, commands = zip(*[(a, c) for a, c in zip(recorder.actions, commands) if a is not None])
+        #actions, commands = zip(*[(a, c) for a, c in zip(recorder.actions, commands) if a is not None])
         event = Event(actions=actions, commands=commands)
         return event
 

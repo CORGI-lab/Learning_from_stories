@@ -1,5 +1,5 @@
 # thing
-type t : object {
+type t {
     predicates {
         sharp(t);
         cuttable(t);
@@ -11,7 +11,7 @@ type t : object {
 
         type {
             kind :: "thing";
-            definition :: "thing can be portable. thing can be on something. thing can be drinkable. thing is usually not drinkable. thing can be cookable. thing is usually not cookable. a thing can be damaged. a thing is usually not damaged. a thing can be sharp. a thing is usually not sharp. a thing can be cuttable. a thing is usually not cuttable. a thing can be a source of heat. Type of cooking is a kind of value. The type of cooking are raw, grilled, roasted and fried. a thing can be needs cooking. Type of cutting is a kind of value. The type of cutting are uncut, sliced, diced and chopped.";
+            definition :: "thing can be something. thing can be drinkable. thing is usually not drinkable. thing can be cookable. thing is usually not cookable. a thing can be damaged. a thing is usually not damaged. a thing can be sharp. a thing is usually not sharp. a thing can be cuttable. a thing is usually not cuttable. a thing can be a source of heat. Type of cooking is a kind of value. The type of cooking are raw, grilled, roasted and fried. a thing can be needs cooking. Type of cutting is a kind of value. The type of cutting are uncut, sliced, diced and chopped.";
         }
 
         predicates {

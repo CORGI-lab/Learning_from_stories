@@ -1,4 +1,4 @@
-# text-Like
+# person
 type pr : t {
     predicates {
         not_asked(pr);
@@ -11,8 +11,8 @@ type pr : t {
     }
 
     rules {
-        ask/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_asked(pr) -> asked(pr);
-        aid/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_aided(pr) -> aided(pr);
+        ask/pr :: $at(P, r) & $at(pr,r) & $in(pr, I) & not_asked(pr) -> asked(pr);
+        aid/pr :: $at(P, r) & $at(pr,r) & $in(pr, I) & not_aided(pr) -> aided(pr);
     }
 
     constraints {
@@ -23,7 +23,7 @@ type pr : t {
     inform7 {
         type {
             kind :: "person-like";
-            definition :: "person-like can be attacked. person-like can be asked. person-like can be stressed. person-like can be aided. person-like can be not aided. person-like is fixed in place.";
+            definition :: "person-like is something. person-like can be asked. person-like can be stressed. person-like can be aided. a person-like is usually not aided. ";
         }
 
         predicates {
@@ -37,9 +37,8 @@ type pr : t {
         }
 
         commands {
-            attack/pr :: "attack the {pr}" :: "_attacking the {pr}";
-            ask/pr :: "ask the {pr}" :: "_asking the {pr}";
-            aid/pr :: "aid the {pr}" :: "_aiding the {pr}";
+            ask/pr :: "ask the {pr}" :: "asking the {pr}";
+            aid/pr :: "aid the {pr}" :: "aiding the {pr}";
         }
 
         code :: """
@@ -55,17 +54,17 @@ type pr : t {
             After _asking: 
                 Say "[the noun] has given the information. he said go north.";
 
-            [Helping]
+            [Aiding]
             Understand the command "aid" as something new. 
-            Understand "aid [something]" as _aiding. 
-            _aiding is an action applying to a thing. 
+            Understand "aid [something]" as aiding. 
+            aiding is an action applying to a thing. 
 
-            Carry out _aiding: 
-                if a person-like (called tx) is not aided: 
-                    say "You help the person with their problem.";
-                    Now the tx is aided; 
-            After _aiding: 
-                Say "They appreciate your help.";
+            Carry out aiding: 
+                if a person-like (called px) is not aided: 
+                    say "You aid the person with their problem.";
+                    Now the px is aided; 
+            After aiding: 
+                Say "They appreciate your aid.";
         """;
     }
 }
