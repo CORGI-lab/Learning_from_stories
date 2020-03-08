@@ -18,7 +18,7 @@ type fo : o {
     inform7 {
         type {
             kind :: "waybill";
-            definition :: "a waybill is something. a waybill can be stamped. a waybill has a type of stamping. a waybill is portable. a waybill can be seen. a waybill can be examined. a waybill can be on something. a waybill is usually not stamped. a waybill can be stampable. a waybill can be stampless.";
+            definition :: "waybills can be stamped. waybills can be stampable. waybills are portable. waybills can be seen. waybills can be examined. waybills can be on something. waybills are usually not stamped. waybills can be stampless.";
         }
 
         predicates {
@@ -40,7 +40,7 @@ type fo : o {
             Before stamping when the noun is not stampable:
                 say "Can only stamp form-like objects.";
                 rule fails.
-                
+
             Carry out stamping: 
                 if a waybill (called tx) is stampable: 
                     say "You stamp it.";
