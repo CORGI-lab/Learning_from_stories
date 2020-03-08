@@ -29,7 +29,7 @@ type fo : o {
         }
 
         commands {
-            stamp/fo :: "stamp {fo}" :: "_stamping the {fo}";
+            stamp :: "stamp {fo}" :: "stamping the {fo}";
         }
 
         code :: """

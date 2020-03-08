@@ -99,6 +99,7 @@ class KnowledgeBase:
         self.rules = _to_regex_dict(self.logic.rules.values())
         self.constraints = _to_regex_dict(self.logic.constraints.values())
         self.inform7_commands = {i7cmd.rule: i7cmd.command for i7cmd in self.logic.inform7.commands.values()}
+        print(self.inform7_commands)
         self.inform7_events = {i7cmd.rule: i7cmd.event for i7cmd in self.logic.inform7.commands.values()}
         self.inform7_predicates = {i7pred.predicate.signature: (i7pred.predicate, i7pred.source)
                                    for i7pred in self.logic.inform7.predicates.values()}

@@ -50,7 +50,7 @@ rest_(r)_adj_type_1:cozy;relaxing;pleasant;sleepy
 rest_(r)_noun_type_2:lounge;bar;parlor;salon;playroom;recreation zone
 rest_(r)_adj_type_2:fun;entertaining;exciting;well lit
 work_(r):#work_(r)_adj# | #work_(r)_noun#
-work_(r)_noun:office;studio;workshop;cubicle;study
+work_(r)_noun:office;studio;workshop;cubicle;study;outside;lobby;counter;storage
 work_(r)_adj:silent;austere;serious;still
 
 hot-adj:super;unreasonably;absurdly;alarmingly;upsettingly
@@ -100,15 +100,6 @@ work_(c)_adj:iron;rusty;ancient
 (meal)_adj:delicious;tasty;suspicious
 (meal)_adj_noun:#(meal)_adj# | #(meal)_noun#
 
-aid_(pr):#(pr)_adj_noun#
-aid_(pr)_noun:person;customer;coworker;man;woman
-aid_(pr)_adj:confused,angry,stressed,upset,happy
-aid_(pr)_adj_noun:#(pr)_adj# | #(pr)_noun#
-
-stamp_(fo):#(fo)_adj_noun#
-stamp_(fo)_noun:waybill;form;receipt
-stamp_(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;
-stamp_(fo)_adj_noun:#stamp_(fo)_adj# | #stamp_(fo)_noun#
 
 fruit:watermelon;melon;honeydew;strawberry;apple;pear;grape;kiwi;cantaloupe
 #Doors
@@ -229,6 +220,22 @@ work_(o)_adj_type_3:heartwarming;hilarious;mind-expanding;out of date;typo-riddl
 work_(o)_noun_type_4:stapler;printer;mouse;keyboard;folder;binder
 work_(o)_adj_type_4:operational;broken;expensive;useless;outmoded
 
+(fo):#(fo)_adj# | #(fo)_noun#
+(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;
+(fo)_noun:waybill;form;receipt
+
+(pr):#(pr)_adj# | #(pr)_noun#
+(pr)_adj:confused,angry,stressed,upset,happy
+(pr)_noun:person;customer;coworker;man;woman;shopper
+
+work_(pr):#(pr)#
+work_(fo):#(fo)#
+
+work_(pr)_noun_type_5:person;customer;coworker;man;woman;shopper
+work_(pr)_adj_type_5:confused,angry,stressed,upset,happy
+
+work_(fo)_noun_type_6:waybill;form;receipt
+work_(fo)_adj_type_6:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped
 
 
 

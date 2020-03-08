@@ -212,7 +212,7 @@ def build_and_compile_papersplease():
 	cw.infos.desc = "This person is your coworker. They look stressed."
 	M.add_fact("not_aided", cw)
 
-	person = M.new(type="pr", name = "customer")
+	person = M.new(type="pr", name = "shopper")
 	person.infos.desc = "This is a customer waiting at the wrong window."
 	M.add_fact("not_aided", person)
 
@@ -280,8 +280,20 @@ def build_and_compile_papersplease():
 	M.add_fact("not_stamped",form8)
 	M.add_fact("not_stamped",form9)
 	M.add_fact("not_stamped",form10)
-	#M.add_fact("on",form1,supporter)
+	M.add_fact("askable",cw)
+	M.add_fact("askable",person)
+	M.add_fact("askable",person2)
 
+	M.add_fact("stampable",form1)
+	M.add_fact("stampable",form2)
+	M.add_fact("stampable",form3)
+	M.add_fact("stampable",form4)
+	M.add_fact("stampable",form5)
+	M.add_fact("stampable",form6)
+	M.add_fact("stampable",form7)
+	M.add_fact("stampable",form8)
+	M.add_fact("stampable",form9)
+	M.add_fact("stampable",form10)
 	#counter.add(supporter2)
 	#office.add(supporter)
 	quest1_cmds = ["go south", "go south", "go west", "take black waybill", "stamp black waybill"]

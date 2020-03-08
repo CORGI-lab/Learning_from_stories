@@ -596,6 +596,15 @@ class Inform7Game:
         A property-aggregation rule for an edible off-stage thing (this is the mention eaten edible rule):
             add "eaten" to the tagline.
 
+        A property-aggregation rule for an aidable off-stage thing (this is the mention aided aidable rule):
+            add "aided" to the tagline.
+
+        A property-aggregation rule for an askable off-stage thing (this is the mention asked askable rule):
+            add "asked" to the tagline.
+
+        A property-aggregation rule for an stampable off-stage thing (this is the mention stamped stampable rule):
+            add "stamped" to the tagline.
+
         The last property-aggregation rule (this is the print aggregated properties rule):
             if the number of entries in the tagline is greater than 0:
                 say " ([tagline])";
@@ -743,6 +752,9 @@ class Inform7Game:
             say "  go <dir>:            move the player north, east, south or west[line break]";
             say "  examine ...:         examine something more closely[line break]";
             say "  eat ...:             eat edible food[line break]";
+            say "  ask ...:             ask askable person-like[line break]";
+            say "  aid ...:             aid aidable person-like[line break]";
+            say "  stamp ...:           stamp stampable waybill[line break]";
             say "  open ...:            open a door or a container[line break]";
             say "  close ...:           close a door or a container[line break]";
             say "  drop ...:            drop an object on the floor[line break]";

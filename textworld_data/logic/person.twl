@@ -12,8 +12,8 @@ type pr : o {
     }
 
     rules {
-        ask :: $at(P, r) & $at(pr,r) & askable(pr) & not_asked(pr) -> asked(pr);
-        aid :: $at(P, r) & $at(pr,r) & aidable(pr) & not_aided(pr) -> aided(pr);
+        ask :: $at(P, r) & $at(pr,r) & askable(pr) -> asked(pr);
+        aid :: $at(P, r) & $at(pr,r) & aidable(pr) -> aided(pr);
     }
 
     constraints {
@@ -24,7 +24,7 @@ type pr : o {
     inform7 {
         type {
             kind :: "person-like";
-            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided. person-like are usually not aided. ";
+            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided. person-like are usually not aided. person-like is fixed in place.";
         }
 
         predicates {
@@ -32,6 +32,7 @@ type pr : o {
             aided(pr) :: "The {pr} is aided";
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
+            askable(pr) :: "The {pr} can be asked";
             stressed(pr) :: "The {pr} is stressed";
             not_stressed(pr) :: "The {pr} is not stressed";
             not_aided(pr) :: "The {pr} is not aided";
@@ -50,10 +51,10 @@ type pr : o {
 
             Carry out asking: 
                 if a person-like (called tx) is askable: 
-                    say "The person is being asked about the bank robbery.";
+                    say "The person is trying to get something done but is having a hard time...";
                     Now the tx is asked;
             After asking: 
-                Say "[the noun] has given the information. he said go north.";
+                Say "[the noun] they could use your aid.";
 
             [Aiding]
             Understand the command "aid" as something new. 
