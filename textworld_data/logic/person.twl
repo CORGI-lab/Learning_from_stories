@@ -1,7 +1,8 @@
 # person
-type pr : t {
+type pr : o {
     predicates {
         not_asked(pr);
+        askable(pr);
         asked(pr);
         attacked(pr);
         stressed(pr);
@@ -11,8 +12,8 @@ type pr : t {
     }
 
     rules {
-        ask/pr :: $at(P, r) & $at(pr,r) & $in(pr, I) & not_asked(pr) -> asked(pr);
-        aid/pr :: $at(P, r) & $at(pr,r) & $in(pr, I) & not_aided(pr) -> aided(pr);
+        ask :: $at(P, r) & $at(pr,r) & askable(pr) & not_asked(pr) -> asked(pr);
+        aid :: $at(P, r) & $at(pr,r) & aidable(pr) & not_aided(pr) -> aided(pr);
     }
 
     constraints {
@@ -23,7 +24,7 @@ type pr : t {
     inform7 {
         type {
             kind :: "person-like";
-            definition :: "person-like is something. person-like can be asked. a person-like can be seen. a person-like can be examined. person-like can be stressed. person-like can be aided. a person-like is usually not aided. ";
+            definition :: "person-like is something. person-like can be asked. a person-like has a type of asking; a person-like can be seen. a person-like can be examined. person-like can be stressed. person-like can be aided. a person-like is usually not aided. ";
         }
 
         predicates {
@@ -37,21 +38,21 @@ type pr : t {
         }
 
         commands {
-            ask/pr :: "ask the {pr}" :: "asking the {pr}";
-            aid/pr :: "aid the {pr}" :: "aiding the {pr}";
+            ask :: "ask the {pr}" :: "asking the {pr}";
+            aid :: "aid the {pr}" :: "aiding the {pr}";
         }
 
         code :: """
             [Asking]
             Understand the command "ask" as something new. 
-            Understand "ask [something]" as _asking. 
-            _asking is an action applying to a thing. 
+            Understand "ask [something]" as asking. 
+            asking is an action applying to a thing. 
 
             Carry out _asking: 
-                if a person-like (called tx) is not asked: 
+                if a person-like (called tx) is askable: 
                     say "The person is being asked about the bank robbery.";
                     Now the tx is asked;
-            After _asking: 
+            After asking: 
                 Say "[the noun] has given the information. he said go north.";
 
             [Aiding]
@@ -60,7 +61,7 @@ type pr : t {
             aiding is an action applying to a thing. 
 
             Carry out aiding: 
-                if a person-like (called px) is not aided: 
+                if a person-like (called px) is aidable: 
                     say "You aid the person with their problem.";
                     Now the px is aided; 
             After aiding: 

@@ -413,6 +413,8 @@ class World:
 
         object_id = 0
         while object_id < nb_objects:
+            if obj_type == "fo":
+                print("GOOD TO GO")
             if len(locked_or_closed_objects) > 0:
                 # Prioritize adding key if there are locked or closed things in the room.
                 obj_type = "k"
@@ -448,6 +450,13 @@ class World:
                 elif obj_type == "f":
                     # HACK: manually add the edible property to food items.
                     state.append(Proposition("edible", [obj]))
+                elif obj_type == "pr":
+                    # HACK: manually add the edible property to food items.
+                    state.append(Proposition("askable", [obj]))
+                    state.append(Proposition("aidable", [obj]))
+                elif obj_type == "fo":
+                    # HACK: manually add the edible property to food items.
+                    state.append(Proposition("stampable", [obj]))
 
                 # Place the object somewhere.
                 obj_holder = rng.choice(allowed_objects_holder)

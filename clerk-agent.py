@@ -23,7 +23,7 @@ from glob import glob
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def play(agent, path, max_step=10000, nb_episodes=10, verbose=True):
+def play(agent, path, max_step=1000, nb_episodes=20, verbose=True):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -208,6 +208,7 @@ class NeuralAgent:
         # Get our next action and value prediction.
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
+        print(action)
         
         if self.mode == "test":
             if done:

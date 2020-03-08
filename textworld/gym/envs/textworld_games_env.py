@@ -65,9 +65,10 @@ class TextworldGamesEnv(gym.Env):
         if action_space is None or observation_space is None:
             # Extract vocabulary from all games.
             vocab = sorted(textworld.text_utils.extract_vocab_from_gamefiles(self.gamefiles))
+            print(vocab)
 
-        self.action_space = action_space or text_spaces.Word(max_length=8, vocab=vocab)
-        self.observation_space = observation_space or text_spaces.Word(max_length=200, vocab=vocab)
+        self.action_space = action_space or text_spaces.Word(max_length=32, vocab=vocab)
+        self.observation_space = observation_space or text_spaces.Word(max_length=500, vocab=vocab)
 
     def seed(self, seed: Optional[int] = None) -> List[int]:
         """ Set the seed for this environment's random generator(s).

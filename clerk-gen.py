@@ -68,9 +68,9 @@ def _compile_test_game(game):
 		"refer_by_name_only": True,
 		"instruction_extension": []
 	}
-	rng_grammar = np.random.RandomState(1234)
-	grammar = textworld.generator.make_grammar(grammar_flags, rng=rng_grammar)
-	game.change_grammar(grammar)
+	#rng_grammar = np.random.RandomState(1234)
+	#grammar = textworld.generator.make_grammar(grammar_flags, rng=rng_grammar)
+	#game.change_grammar(grammar)
 
 	game_file = textworld.generator.compile_game(game)
 	return game_file
@@ -284,10 +284,12 @@ def build_and_compile_papersplease():
 
 	#counter.add(supporter2)
 	#office.add(supporter)
-	quest1_cmds = ["go south", "ask customer", "go south", "go west", "take black waybill", "stamp black waybill"]
+	quest1_cmds = ["go south", "go south", "go west", "take black waybill", "stamp black waybill"]
 
 	q1= M.new_event_using_commands(quest1_cmds)
-	f1 = Event(conditions={M.new_fact("aided", cw)})
+	#f1 = Event(conditions={M.new_fact("aided", cw)})
+	quest1_fail = ["go south", "go south", "aid coworker"]
+	f1 = M.new_event_using_commands(quest1_fail)
 
 	quest1 = Quest(win_events=[q1],
 				   fail_events=[f1],
@@ -295,10 +297,13 @@ def build_and_compile_papersplease():
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["go south", "ask customer", "go south", "go west", "take black waybill", "stamp red waybill"]
+	quest2_cmds = ["go south", "go south", "go west", "take red waybill", "stamp red waybill"]
 	q2 = M.new_event_using_commands(quest2_cmds)
 
-	f2 = Event(conditions={M.new_fact("aided", person)})
+	#f2 = Event(conditions={M.new_fact("aided", person)})
+
+	quest2_fail = ["go south", "go south", "aid customer"]
+	f2 = M.new_event_using_commands(quest2_fail)
 
 	quest2 = Quest(win_events=[q2],
 				   fail_events=[f2],
@@ -306,16 +311,32 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest2)
 
-	quest3_cmds = ["go south", "ask customer", "go south", "go west", "stamp red waybill", "stamp black waybill", "stamp green waybill", "stamp orange waybill"]
+	quest3_cmds = ["go south", "go south", "go west", "take green waybill", "stamp green waybill"]
 	q3 = M.new_event_using_commands(quest3_cmds)
 
-	f3 = Event(conditions={M.new_fact("aided", person2)})
+	quest3_fail = ["go south", "aid customer"]
+	f3 = M.new_event_using_commands(quest3_fail)
+	#f3 = Event(conditions={M.new_fact("aided", person2)})
 
 	quest3 = Quest(win_events=[q3],
-				   fail_events=[f3,f2,f1],
+				   fail_events=[f3],
 				   reward=1)
 
 	M.quests.append(quest3)
+
+	quest4_cmds = ["go south", "go south", "go west", "take red waybill", "take green waybill", "take black waybill", "stamp red waybill", "stamp black waybill", "stamp green waybill"]
+	q4 = M.new_event_using_commands(quest4_cmds)
+
+	#f3 = Event(conditions={M.new_fact("aided", person2)})
+	quest4_fail = ["go south", "aid customer", "go south", "aid customer", "aid coworker"]
+	f4 = M.new_event_using_commands(quest4_fail)
+
+	quest4 = Quest(win_events=[q4],
+				   fail_events=[f4],
+				   reward=1)
+
+	M.quests.append(quest4)
+
 
 	# quest1_cmds = ["look around", "go south", "go south", "go west", "take black waybill", "stamp black waybill"]
 
@@ -351,7 +372,7 @@ def build_and_compile_papersplease():
 	# M.quests.append(quest3)
 	
 	game = M.build()
-	game.main_quest = quest3 
+	game.main_quest = quest4 
 	game_file = _compile_test_game(game)
 	return game, game_file
 	

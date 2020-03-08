@@ -1,12 +1,14 @@
 #-------------------------
 #Instructions Grammar
 #-------------------------
-obj_types:(o|k|f)
-obj_types_no_key:(o|f)
-obj_types_things:(pr|t|fo)
+obj_types:(o|k|f|pr|fo)
+obj_types_no_key:(o|f|pr|fo)
 on_types:(c|s)
 lock_types:(c|d)
 eat_types:(f)
+stamp_types:(fo)
+ask_types:(pr)
+aid_types:(pr)
 close_open_types:(d|c)
 lock_type_var:#lock_types#;#lock_types# #in_the_(r)#
 (s)_var:(s);(s) #in_the_(r)#
@@ -26,13 +28,9 @@ dice:dice the #obj_types#
 chop:chop the #obj_types#
 slice:slice the #obj_types#
 cook:cook the #obj_types#
-stamp:stamp the #obj_types_things#
-stamp/t:stamp the #obj_types_things#
-stamp/fo:stamp the #obj_types_things#
-ask/pr:ask the #obj_types_things#
-aid:aid the #obj_types_things#
-aid/t:aid the #obj_types_things#
-aid/pr:aid the #obj_types_things#
+stamp:stamp the #obj_types#
+ask:ask the #obj_types#
+aid:aid the #obj_types#
 take:#take_synonym_1# the #obj_types# in the (r).;#take_synonym_1# the #obj_types# from the (r).;#take_synonym_1# the #obj_types# that's in the (r).
 take_synonym_1:take;retrieve;recover;pick up
 take/s:#take_synonym_1# the #obj_types# from the #on_var#.
@@ -56,11 +54,26 @@ eat:#eat_syn_1# the #eat_var#.
 eat_syn_u:Eat;
 eat_syn_1:eat;
 eat_syn_v:eaten;
+ask:#ask_syn_1# the #ask_var#.
+ask_syn_u:Ask;
+ask_syn_1:ask;
+ask_syn_v:asked;
+aid:#aid_syn_1# the #aid_var#.
+aid_syn_u:Aid;
+aid_syn_1:aid;
+aid_syn_v:aided;
+stamp:#stamp_syn_1# the #stamp_var#.
+stamp_syn_u:Stamp;
+stamp_syn_1:stamp;
+stamp_syn_v:stamped;
 open:open the #lock_type_var#.;ensure that the #lock_type_var# is open.;#make_syn_v# that the #lock_type_var# is #open_syn#.
 open_syn:opened;open;wide open;ajar
 close:close the #lock_type_var#.;#make_syn_v# that the #lock_type_var# is #closed_syn#.
 closed_syn:closed;shut
 eat_var:#eat_types#;#eat_types#
+ask_var:#ask_types#;#ask_types#
+aid_var:#aid_types#;#aid_types#
+stamp_var:#stamp_types#;#stamp_types#
 on_var:#on_types#;#on_types# #in_the_(r)#
 unlock:#unlock_key#;#unlock_no_key#
 unlock_key:unlock the #lock_type_var# #by_the_syn# (k).;check that the #lock_type_var# is unlocked #by_the_syn# (k).;#make_syn_v# that the #lock_type_var# is unlocked #by_the_syn# (k).;Insert the (k) into the #lock_type_var#'s lock to unlock it.
@@ -116,6 +129,9 @@ action_separator_take: #afterhave# #havetaken# the #obj_types#, ; #after# #takin
 action_separator_take/s: #afterhave# #havetaken# the #obj_types#, ; #after# #taking# the #obj_types#, ; With the #obj_types#, ; If you can get your hands on the #obj_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
 action_separator_take/c: #afterhave# #havetaken# the #obj_types#, ; #after# #taking# the #obj_types#, ; With the #obj_types#, ; If you can get your hands on the #obj_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
 action_separator_eat: #afterhave# #ate# the #eat_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
+action_separator_stamp: #afterhave# #stamped# the #stamp_types#, ; #after# #stamping# the #stamp_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
+action_separator_ask: #afterhave# #asked# the #ask_types#, ; #after# #asking# the #ask_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
+action_separator_aid: #afterhave# #aided# the #aid_types#, ; #after# #aiding# the #aid_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
 action_separator_insert: #afterhave# #inserted# the #obj_types# into the (c), ; #after# #inserting# the #obj_types# into the (c), ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
 action_separator_put: #afterhave# #put_v# the #obj_types# on the (s), ; #after# #putting# the #obj_types# on the (s), ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
 action_separator_open: #afterhave# #opened# the #close_open_types#, ; #after# #opening# the #close_open_types#, ;#emptyinstruction1#;#emptyinstruction2#;#emptyinstruction3#;#emptyinstruction4#;#emptyinstruction5#;#emptyinstruction6#;#emptyinstruction7#;#emptyinstruction8#;#emptyinstruction9#;#emptyinstruction10#
@@ -136,6 +152,9 @@ after:after
 aided:aided
 asked:asked
 stamped:stamped
+stamping:stamping
+aiding:aiding
+asking:asking
 taking:taking;getting;picking up;stealing
 picking-up:taking;getting;picking up;stealing
 ate:ate;consumed
