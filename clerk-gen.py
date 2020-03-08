@@ -185,22 +185,22 @@ def build_and_compile_papersplease():
 
 	form1 = M.new(type="fo", name = 'red waybill') 
 	form1.infos.desc = "It's a waybill."
-	# form2 = M.new(type="fo", name = 'blue waybill') 
-	# form2.infos.desc = "It's a form."
-	# form3 = M.new(type="fo", name = 'green waybill') 
-	# form3.infos.desc = "It's a form."
-	# form4 = M.new(type="fo", name = 'yellow waybill') 
-	# form4.infos.desc = "It's a form."
-	# form5 = M.new(type="fo", name = 'orange waybill') 
-	# form5.infos.desc = "It's a form."
-	# form6 = M.new(type="fo", name = 'purple waybill') 
-	# form6.infos.desc = "It's a long form."
-	# form7 = M.new(type="fo", name = 'cyan waybill') 
-	# form7.infos.desc = "It's a long form."
-	# form8 = M.new(type="fo", name = 'pink waybill') 
-	# form8.infos.desc = "It's a long form."
-	# form9 = M.new(type="fo", name = 'white waybill') 
-	# form9.infos.desc = "It's a long form."
+	form2 = M.new(type="fo", name = 'blue waybill') 
+	form2.infos.desc = "It's a form."
+	form3 = M.new(type="fo", name = 'green waybill') 
+	form3.infos.desc = "It's a form."
+	form4 = M.new(type="fo", name = 'yellow waybill') 
+	form4.infos.desc = "It's a form."
+	form5 = M.new(type="fo", name = 'orange waybill') 
+	form5.infos.desc = "It's a form."
+	form6 = M.new(type="fo", name = 'purple waybill') 
+	form6.infos.desc = "It's a long form."
+	form7 = M.new(type="fo", name = 'cyan waybill') 
+	form7.infos.desc = "It's a long form."
+	form8 = M.new(type="fo", name = 'pink waybill') 
+	form8.infos.desc = "It's a long form."
+	form9 = M.new(type="fo", name = 'white waybill') 
+	form9.infos.desc = "It's a long form."
 	form10 = M.new(type="fo", name = 'black waybill') 
 	form10.infos.desc = "It's a long waybill."
 	#stove = M.new(type="oven", name = "oven")
@@ -216,6 +216,9 @@ def build_and_compile_papersplease():
 	person.infos.desc = "This is a customer waiting at the wrong window."
 	M.add_fact("not_aided", person)
 
+	person2 = M.new(type="pr", name = "customer")
+	person2.infos.desc = "This is a customer confused at a shelf."
+	M.add_fact("not_aided", person2)
 	# chair1 = M.new(type='s', name = "chair")  # When not provided, names are automatically generated.
 	# #office.add(supporter)  # Supporters are fixed in place.
 	# chair1.infos.desc = "It is a wooden chair."
@@ -229,19 +232,21 @@ def build_and_compile_papersplease():
 	#counter.add(chair1)
 	#counter.add(chair2)
 
+	lobby.add(person2)
+
 	counter.add(cw)
 	counter.add(person)
 
 	office.add(form1)
-	# office.add(form2)
-	# office.add(form3)
-	# office.add(form4)
-	# office.add(form5)
+	office.add(form2)
+	office.add(form3)
+	office.add(form4)
+	office.add(form5)
 
-	# office.add(form6)
-	# office.add(form7)
-	# office.add(form8)
-	# office.add(form9)
+	office.add(form6)
+	office.add(form7)
+	office.add(form8)
+	office.add(form9)
 	office.add(form10)
 
 	# supporter2.add(form1)
@@ -265,22 +270,21 @@ def build_and_compile_papersplease():
 	supporter.add(food2)
 	M.add_fact("raw",food2)
 
-	#M.add_fact("not_stamped",form1)
-	# M.add_fact("not_stamped",form2)
-	# M.add_fact("not_stamped",form3)
-	# M.add_fact("not_stamped",form4)
-	# M.add_fact("not_stamped",form5)
-	# M.add_fact("not_stamped",form6)
-	# M.add_fact("not_stamped",form7)
-	# M.add_fact("not_stamped",form8)
-	# M.add_fact("not_stamped",form9)
-	#M.add_fact("not_stamped",form10)
+	M.add_fact("not_stamped",form1)
+	M.add_fact("not_stamped",form2)
+	M.add_fact("not_stamped",form3)
+	M.add_fact("not_stamped",form4)
+	M.add_fact("not_stamped",form5)
+	M.add_fact("not_stamped",form6)
+	M.add_fact("not_stamped",form7)
+	M.add_fact("not_stamped",form8)
+	M.add_fact("not_stamped",form9)
+	M.add_fact("not_stamped",form10)
 	#M.add_fact("on",form1,supporter)
 
 	#counter.add(supporter2)
 	#office.add(supporter)
-
-	quest1_cmds = ["inventory","take paper","go south", "take carrot", "eat carrot", "go south", "go west", "take black waybill", "stamp black waybill"]
+	quest1_cmds = ["go south", "ask customer", "go south", "go west", "take black waybill", "stamp black waybill"]
 
 	q1= M.new_event_using_commands(quest1_cmds)
 	f1 = Event(conditions={M.new_fact("aided", cw)})
@@ -291,7 +295,7 @@ def build_and_compile_papersplease():
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["open glass door", "go south", "unlock iron door with iron key", "open iron door", "go south","open pine door","go west", "stamp red waybill"]
+	quest2_cmds = ["go south", "ask customer", "go south", "go west", "take black waybill", "stamp red waybill"]
 	q2 = M.new_event_using_commands(quest2_cmds)
 
 	f2 = Event(conditions={M.new_fact("aided", person)})
@@ -302,26 +306,52 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest2)
 
-	#quest3_cmds = ["go south", "aid customer"]
-	#customer_ev = M.new_event_using_commands(quest3_cmds)
+	quest3_cmds = ["go south", "ask customer", "go south", "go west", "stamp red waybill", "stamp black waybill", "stamp green waybill", "stamp orange waybill"]
+	q3 = M.new_event_using_commands(quest3_cmds)
 
+	f3 = Event(conditions={M.new_fact("aided", person2)})
 
-	#quest3 = Quest(win_events=[customer_ev],
-	#			   fail_events=[blah],
-	#			   reward=1)
+	quest3 = Quest(win_events=[q3],
+				   fail_events=[f3,f2,f1],
+				   reward=1)
 
-	#quest3_cmds = ["go south", "aid customer"]
+	M.quests.append(quest3)
 
-	#quest4_cmds = ["go south", "go east", "go south", "stamp red form", "stamp green form", "stamp yellow form", "stamp blue form"]
+	# quest1_cmds = ["look around", "go south", "go south", "go west", "take black waybill", "stamp black waybill"]
 
-	#quest4 = Quest(win_events=[customer_ev],
-	#			   fail_events=[],
-	#			   reward=1)
+	# q1= M.new_event_using_commands(quest1_cmds)
+	# f1 = Event(conditions={M.new_fact("aided", cw)})
 
-	M.quests = [quest1,quest2]
+	# quest1 = Quest(win_events=[q1],
+	# 			   fail_events=[f1],
+	# 			   reward=1)
+	
+	# M.quests.append(quest1)
+
+	# quest2_cmds = ["look around", "go south", "go south", "go west", "take black waybill", "stamp red waybill"]
+	# q2 = M.new_event_using_commands(quest2_cmds)
+
+	# f2 = Event(conditions={M.new_fact("aided", person)})
+
+	# quest2 = Quest(win_events=[q2],
+	# 			   fail_events=[f2],
+	# 			   reward=1)
+
+	# M.quests.append(quest2)
+
+	# quest3_cmds = ["look around", "go south", "go south", "go west", "stamp red waybill", "stamp black waybill", "stamp green waybill", "stamp orange waybill"]
+	# q3 = M.new_event_using_commands(quest3_cmds)
+
+	# f3 = Event(conditions={M.new_fact("aided", person2)})
+
+	# quest3 = Quest(win_events=[q3],
+	# 			   fail_events=[f3,f2,f1],
+	# 			   reward=1)
+
+	# M.quests.append(quest3)
 	
 	game = M.build()
-	game.main_quest = quest2 
+	game.main_quest = quest3 
 	game_file = _compile_test_game(game)
 	return game, game_file
 	

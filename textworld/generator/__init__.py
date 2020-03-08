@@ -237,7 +237,8 @@ def compile_game(game: Game, options: Optional[GameOptions] = None):
 
     folder, filename = os.path.split(options.path)
     if not filename:
-        filename = game.metadata.get("uuid", str(uuid.uuid4()))
+        filename = "cg"
+        #filename = game.metadata.get("uuid", str(uuid.uuid4()))
 
     filename, ext = os.path.splitext(filename)
     if not ext:

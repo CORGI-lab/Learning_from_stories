@@ -17,9 +17,13 @@ import torch.nn.functional as F
 import os
 from glob import glob
 
+#tw-extract -v entities /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
+#tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
+#tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def play(agent, path, max_step=100, nb_episodes=10, verbose=True):
+def play(agent, path, max_step=10000, nb_episodes=10, verbose=True):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -48,6 +52,7 @@ def play(agent, path, max_step=100, nb_episodes=10, verbose=True):
         nb_moves = 0
         while not done:
             command = agent.act(obs, score, done, infos)
+            print(command)
             obs, score, done, infos = env.step(command)
             nb_moves += 1
         
@@ -195,6 +200,7 @@ class NeuralAgent:
         # Build agent's observation: feedback + look + inventory.
         input_ = "{}\n{}\n{}".format(obs, infos["description"], infos["inventory"])
         
+        print(infos["admissible_commands"])
         # Tokenize and pad the input and the commands to chose from.
         input_tensor = self._process([input_])
         commands_tensor = self._process(infos["admissible_commands"])
@@ -269,7 +275,7 @@ class NeuralAgent:
         return action
 
 agent = NeuralAgent()
-play(agent, "tw_games/clerk-game.ulx")
+play(agent, "tw_games/cg.ulx")
 # Register a text-based game as a new Gym's environment.
 # env_id = textworld.gym.register_game("tw_games/clerk_game.ulx",
 #                                      max_episode_steps=50)

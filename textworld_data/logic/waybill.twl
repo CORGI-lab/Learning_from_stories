@@ -8,7 +8,7 @@ type fo : t {
     }
 
     rules {
-        stamp/fo :: $at(P, r) & $in(fo, I) -> stamped(fo);
+        stamp/fo :: $at(P, r) & $in(fo, I) & not_stamped(pr) -> stamped(fo);
     }
 
     constraints {
@@ -18,7 +18,7 @@ type fo : t {
     inform7 {
         type {
             kind :: "waybill";
-            definition :: "a waybill can be stamped. a waybill is portable. a waybill can be on something. a waybill is usually not stamped. a waybill can be stampable. a waybill can be stampless.";
+            definition :: "a waybill is something. a waybill can be stamped. a waybill is portable. a waybill can be seen. a waybill can be examined. a waybill can be on something. a waybill is usually not stamped. a waybill can be stampable. a waybill can be stampless.";
         }
 
         predicates {

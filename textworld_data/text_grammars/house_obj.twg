@@ -50,7 +50,7 @@ rest_(r)_adj_type_1:cozy;relaxing;pleasant;sleepy
 rest_(r)_noun_type_2:lounge;bar;parlor;salon;playroom;recreation zone
 rest_(r)_adj_type_2:fun;entertaining;exciting;well lit
 work_(r):#work_(r)_adj# | #work_(r)_noun#
-work_(r)_noun:office;studio;workshop;cubicle;study;counter;lobby
+work_(r)_noun:office;studio;workshop;cubicle;study;counter;lobby;outside
 work_(r)_adj:silent;austere;serious;still
 
 hot-adj:super;unreasonably;absurdly;alarmingly;upsettingly
@@ -221,11 +221,10 @@ work_(o)_adj_type_3:heartwarming;hilarious;mind-expanding;out of date;typo-riddl
 #device for using another device
 work_(o)_noun_type_4:stapler;printer;mouse;keyboard;folder;binder
 work_(o)_adj_type_4:operational;broken;expensive;useless;outmoded
-work_(o)_noun_type_1:waybill
-work_(o)_adj_type_1:red;blue;green;purple;orange;yellow;black;pink;white;cyan
-work_(o)_noun_type_1:person;customer
-work_(o)_adj_type_1:confused;tired;scared;lost;hurt;annoyed
-
+stamp_(o)_noun_type_1:waybill
+stamp_(o)_adj_type_1:red;blue;green;purple;orange;yellow;black;pink;white;cyan
+aid_(o)_noun_type_1:person;customer;coworker
+aid_(o)_adj_type_1:confused;tired;scared;lost;hurt;annoyed
 
 # Food
 # Each roomType must have specific food
@@ -288,6 +287,24 @@ container_what_is:imposing;sturdy;well-built;durable;robust;rugged;hefty;command
 supp_stable:stable;wobbly;unstable;balanced;durable;reliable;solid;undependable;solidly built;an unstable piece of #garbage#;shaky
 garbage:garbage;trash;junk
 (o)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
+obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
+looks_seems:looks;seems;appears;appears to be;would seem to be
+out_in_place:out of place;to fit in;well matched to everything else
+restaurant:Burger#place#
+place:town;village;hamlet;burg;ville;City
+(t)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
+obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
+looks_seems:looks;seems;appears;appears to be;would seem to be
+out_in_place:out of place;to fit in;well matched to everything else
+restaurant:Burger#place#
+place:town;village;hamlet;burg;ville;City
+(pr)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
+obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
+looks_seems:looks;seems;appears;appears to be;would seem to be
+out_in_place:out of place;to fit in;well matched to everything else
+restaurant:Burger#place#
+place:town;village;hamlet;burg;ville;City
+(fo)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
 obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
 looks_seems:looks;seems;appears;appears to be;would seem to be
 out_in_place:out of place;to fit in;well matched to everything else
