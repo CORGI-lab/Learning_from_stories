@@ -52,7 +52,7 @@ def play(agent, path, max_step=1000, nb_episodes=20, verbose=True):
         nb_moves = 0
         while not done:
             command = agent.act(obs, score, done, infos)
-            print(command)
+            #print(command)
             obs, score, done, infos = env.step(command)
             nb_moves += 1
         
@@ -285,7 +285,8 @@ agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
 play(agent, "tw_games/cg.ulx", nb_episodes=500, verbose=False)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
-
+agent.test()
+play(agent, "tw_games/cg.ulx")  # Dense rewards game.
 #play(agent, "tw_games/cg.ulx")
 # Register a text-based game as a new Gym's environment.
 # env_id = textworld.gym.register_game("tw_games/clerk_game.ulx",
