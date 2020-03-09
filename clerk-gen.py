@@ -132,13 +132,13 @@ def build_and_compile_papersplease():
 
 	counter = M.new_room("counter")
 	lobby = M.new_room("lobby")
-	outside = M.new_room("outside")
-	storage = M.new_room("storage")
+	#outside = M.new_room("outside")
+	#storage = M.new_room("storage")
 	office = M.new_room("office")
-	M.set_player(outside)
-	c1 = M.connect(outside.south, lobby.north)
+	M.set_player(lobby)
+	#c1 = M.connect(outside.south, lobby.north)
 	c2 = M.connect(counter.north, lobby.south)
-	c3 = M.connect(counter.east, storage.west)
+	#c3 = M.connect(counter.east, storage.west)
 	c4 = M.connect(counter.west, office.east)
 
 	# door1 = M.new_door(c1, name="glass door")
@@ -162,11 +162,11 @@ def build_and_compile_papersplease():
 
 	#M.inventory.add(obj)  # Add the object to the player's inventory.
 	#M.render()
-	outside.infos.desc = "You are now outside your office. There is a door."
+	#outside.infos.desc = "You are now outside your office. There is a door."
 	counter.infos.desc = "You are now behind your counter."
 	lobby.infos.desc = "This is the clerk office lobby."
 	office.infos.desc = "This is your office. There's not much here aside from a desk with your work on it."
-	storage.infos.desc = "This is the storage room where you keep the doodads. There is one last doodad."
+	#storage.infos.desc = "This is the storage room where you keep the doodads. There is one last doodad."
 
 	#M.add_distractors(10)
 
@@ -180,8 +180,8 @@ def build_and_compile_papersplease():
 	#doodad = M.new(type="o", name = 'doodad') 
 	#doodad.infos.desc = "It's a strange looking item. Who could need one of these? You know they are normally placed on a display out front."
 	
-	counter.add(supporter2)
-	office.add(supporter)
+	#counter.add(supporter2)
+	#office.add(supporter)
 
 	form1 = M.new(type="fo", name = 'red waybill') 
 	form1.infos.desc = "It's a waybill."
@@ -241,13 +241,13 @@ def build_and_compile_papersplease():
 	office.add(form2)
 	office.add(form3)
 	office.add(form4)
-	office.add(form5)
+	#office.add(form5)
 
-	office.add(form6)
-	office.add(form7)
-	office.add(form8)
-	office.add(form9)
-	office.add(form10)
+	#office.add(form6)
+	#office.add(form7)
+	#office.add(form8)
+	#office.add(form9)
+	#office.add(form10)
 
 	# supporter2.add(form1)
 	# supporter2.add(form2)
@@ -262,8 +262,8 @@ def build_and_compile_papersplease():
 	# supporter.add(form10)
 	food5 = M.new(type="f", name = 'berry') 
 	office.add(food5)
-	food4 = M.new(type="t", name = 'paper') 
-	outside.add(food4)
+	#food4 = M.new(type="t", name = 'paper') 
+	#outside.add(food4)
 	food3 = M.new(type="f", name = 'carrot') 
 	lobby.add(food3)
 	food2 = M.new(type="f", name = 'apple') 
@@ -274,33 +274,37 @@ def build_and_compile_papersplease():
 	M.add_fact("not_stamped",form2)
 	M.add_fact("not_stamped",form3)
 	M.add_fact("not_stamped",form4)
-	M.add_fact("not_stamped",form5)
-	M.add_fact("not_stamped",form6)
-	M.add_fact("not_stamped",form7)
-	M.add_fact("not_stamped",form8)
-	M.add_fact("not_stamped",form9)
-	M.add_fact("not_stamped",form10)
+	# M.add_fact("not_stamped",form5)
+	# M.add_fact("not_stamped",form6)
+	# M.add_fact("not_stamped",form7)
+	# M.add_fact("not_stamped",form8)
+	# M.add_fact("not_stamped",form9)
+	# M.add_fact("not_stamped",form10)
 	M.add_fact("askable",cw)
 	M.add_fact("askable",person)
 	M.add_fact("askable",person2)
+
+	M.add_fact("aidable",cw)
+	M.add_fact("aidable",person)
+	M.add_fact("aidable",person2)
 
 	M.add_fact("stampable",form1)
 	M.add_fact("stampable",form2)
 	M.add_fact("stampable",form3)
 	M.add_fact("stampable",form4)
-	M.add_fact("stampable",form5)
-	M.add_fact("stampable",form6)
-	M.add_fact("stampable",form7)
-	M.add_fact("stampable",form8)
-	M.add_fact("stampable",form9)
-	M.add_fact("stampable",form10)
+	# M.add_fact("stampable",form5)
+	# M.add_fact("stampable",form6)
+	# M.add_fact("stampable",form7)
+	# M.add_fact("stampable",form8)
+	# M.add_fact("stampable",form9)
+	# M.add_fact("stampable",form10)
 	#counter.add(supporter2)
 	#office.add(supporter)
-	quest1_cmds = ["go south", "go south", "go west", "take black waybill", "stamp black waybill"]
+	quest1_cmds = ["go south", "go west", "take blue waybill", "stamp blue waybill"]
 
 	q1= M.new_event_using_commands(quest1_cmds)
 	#f1 = Event(conditions={M.new_fact("aided", cw)})
-	quest1_fail = ["go south", "go south", "aid coworker"]
+	quest1_fail = ["go south", "aid coworker"]
 	f1 = M.new_event_using_commands(quest1_fail)
 
 	quest1 = Quest(win_events=[q1],
@@ -309,12 +313,12 @@ def build_and_compile_papersplease():
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["go south", "go south", "go west", "take red waybill", "stamp red waybill"]
+	quest2_cmds = ["go south", "go west", "take red waybill", "stamp red waybill"]
 	q2 = M.new_event_using_commands(quest2_cmds)
 
 	#f2 = Event(conditions={M.new_fact("aided", person)})
 
-	quest2_fail = ["go south", "go south", "aid customer"]
+	quest2_fail = ["aid customer"]
 	f2 = M.new_event_using_commands(quest2_fail)
 
 	quest2 = Quest(win_events=[q2],
@@ -323,7 +327,7 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest2)
 
-	quest3_cmds = ["go south", "go south", "go west", "take green waybill", "stamp green waybill"]
+	quest3_cmds = ["go south", "go west", "take green waybill", "stamp green waybill"]
 	q3 = M.new_event_using_commands(quest3_cmds)
 
 	quest3_fail = ["go south", "aid customer"]
@@ -336,11 +340,11 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest3)
 
-	quest4_cmds = ["go south", "go south", "go west", "take red waybill", "take green waybill", "take black waybill", "stamp red waybill", "stamp black waybill", "stamp green waybill"]
+	quest4_cmds = ["go south", "go west", "take red waybill", "take green waybill", "take blue waybill", "stamp red waybill", "stamp blue waybill", "stamp green waybill"]
 	q4 = M.new_event_using_commands(quest4_cmds)
 
 	#f3 = Event(conditions={M.new_fact("aided", person2)})
-	quest4_fail = ["go south", "aid customer", "go south", "aid customer", "aid coworker"]
+	quest4_fail = []
 	f4 = M.new_event_using_commands(quest4_fail)
 
 	quest4 = Quest(win_events=[q4],

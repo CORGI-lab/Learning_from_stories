@@ -23,7 +23,7 @@ from glob import glob
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def play(agent, path, max_step=1000, nb_episodes=20, verbose=True):
+def play(agent, path, max_step=500, nb_episodes=500, verbose=True):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -122,7 +122,7 @@ class CommandScorer(nn.Module):
 
 class NeuralAgent:
     """ Simple Neural Agent for playing TextWorld games. """
-    MAX_VOCAB_SIZE = 1000
+    MAX_VOCAB_SIZE = 100
     UPDATE_FREQUENCY = 10
     LOG_FREQUENCY = 1000
     GAMMA = 0.9
@@ -133,8 +133,8 @@ class NeuralAgent:
         self.id2word = ["<PAD>", "<UNK>"]
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
-        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=128)
-        self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
+        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=256)
+        self.optimizer = optim.Adam(self.model.parameters(), 0.0003)
         
         self.mode = "test"
     
@@ -283,10 +283,10 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", nb_episodes=500, verbose=False)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", nb_episodes=25000, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
-play(agent, "tw_games/cg.ulx")  # Dense rewards game.
+#play(agent, "tw_games/cg.ulx")  # Dense rewards game.
 #play(agent, "tw_games/cg.ulx")
 # Register a text-based game as a new Gym's environment.
 # env_id = textworld.gym.register_game("tw_games/clerk_game.ulx",
