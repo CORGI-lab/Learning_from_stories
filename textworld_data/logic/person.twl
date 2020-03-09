@@ -33,6 +33,7 @@ type pr : o {
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
             askable(pr) :: "The {pr} can be asked";
+            aidable(pr) :: "The {pr} can be aided";
             stressed(pr) :: "The {pr} is stressed";
             not_stressed(pr) :: "The {pr} is not stressed";
             not_aided(pr) :: "The {pr} is not aided";

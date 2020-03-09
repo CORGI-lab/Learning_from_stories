@@ -200,7 +200,7 @@ class NeuralAgent:
         # Build agent's observation: feedback + look + inventory.
         input_ = "{}\n{}\n{}".format(obs, infos["description"], infos["inventory"])
         
-        print(infos["admissible_commands"])
+        #print(infos["admissible_commands"])
         # Tokenize and pad the input and the commands to chose from.
         input_tensor = self._process([input_])
         commands_tensor = self._process(infos["admissible_commands"])
@@ -208,8 +208,8 @@ class NeuralAgent:
         # Get our next action and value prediction.
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
-        print(action)
-        
+        #print(action)
+
         if self.mode == "test":
             if done:
                 self.model.reset_hidden(1)
@@ -276,7 +276,17 @@ class NeuralAgent:
         return action
 
 agent = NeuralAgent()
-play(agent, "tw_games/cg.ulx")
+
+from time import time
+agent = NeuralAgent()
+
+print("Training")
+agent.train()  # Tell the agent it should update its parameters.
+starttime = time()
+play(agent, "tw_games/cg.ulx", nb_episodes=500, verbose=False)  # Dense rewards game.
+print("Trained in {:.2f} secs".format(time() - starttime))
+
+#play(agent, "tw_games/cg.ulx")
 # Register a text-based game as a new Gym's environment.
 # env_id = textworld.gym.register_game("tw_games/clerk_game.ulx",
 #                                      max_episode_steps=50)

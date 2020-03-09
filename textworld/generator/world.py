@@ -413,8 +413,6 @@ class World:
 
         object_id = 0
         while object_id < nb_objects:
-            if obj_type == "fo":
-                print("GOOD TO GO")
             if len(locked_or_closed_objects) > 0:
                 # Prioritize adding key if there are locked or closed things in the room.
                 obj_type = "k"
