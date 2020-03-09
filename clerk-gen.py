@@ -212,12 +212,12 @@ def build_and_compile_papersplease():
 	cw.infos.desc = "This person is your coworker. They look stressed."
 	M.add_fact("not_aided", cw)
 
-	person = M.new(type="pr", name = "shopper")
+	person = M.new(type="pr", name = "customer")
 	person.infos.desc = "This is a customer waiting at the wrong window."
 	M.add_fact("not_aided", person)
 
-	person2 = M.new(type="pr", name = "customer")
-	person2.infos.desc = "This is a customer confused at a shelf."
+	person2 = M.new(type="pr", name = "shopper")
+	person2.infos.desc = "This is a potential customer confused at a shelf."
 	M.add_fact("not_aided", person2)
 	# chair1 = M.new(type='s', name = "chair")  # When not provided, names are automatically generated.
 	# #office.add(supporter)  # Supporters are fixed in place.
@@ -318,7 +318,7 @@ def build_and_compile_papersplease():
 
 	#f2 = Event(conditions={M.new_fact("aided", person)})
 
-	quest2_fail = ["aid customer"]
+	quest2_fail = ["aid shopper"]
 	f2 = M.new_event_using_commands(quest2_fail)
 
 	quest2 = Quest(win_events=[q2],
@@ -344,11 +344,11 @@ def build_and_compile_papersplease():
 	q4 = M.new_event_using_commands(quest4_cmds)
 
 	#f3 = Event(conditions={M.new_fact("aided", person2)})
-	quest4_fail = []
-	f4 = M.new_event_using_commands(quest4_fail)
+	#quest4_fail = []
+	#f4 = M.new_event_using_commands(quest4_fail)
 
 	quest4 = Quest(win_events=[q4],
-				   fail_events=[f4],
+				   fail_events=[],
 				   reward=1)
 
 	M.quests.append(quest4)
