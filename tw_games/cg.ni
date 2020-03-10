@@ -240,33 +240,36 @@ Understand the command "stamp" as something new.
 Understand "stamp [something]" as stamping. 
 stamping is an action applying to a thing. 
 
-Before stamping when the noun is not stampable:
-	say "Can only stamp form-like objects.";
-	rule fails.
-
 Carry out stamping: 
-	if a waybill (called tx) is stampable: 
+	if a waybill (called tx) is not stamped: 
 		say "You stamp it.";
 		Now the tx is stamped; 
 After stamping: 
 	Say "It is now stamped.";
 
 
-The r_0 and the r_2 and the r_1 are rooms.
+The r_0 and the r_3 and the r_2 and the r_1 are rooms.
 
 The internal name of r_0 is "counter".
 The printed name of r_0 is "-= Counter =-".
 The counter part 0 is some text that varies. The counter part 0 is "You are now behind your counter.".
 The description of r_0 is "[counter part 0]".
 
-The r_2 is mapped west of r_0.
+The r_3 is mapped west of r_0.
 The r_1 is mapped north of r_0.
-The internal name of r_2 is "office".
-The printed name of r_2 is "-= Office =-".
+The r_2 is mapped east of r_0.
+The internal name of r_3 is "office".
+The printed name of r_3 is "-= Office =-".
 The office part 0 is some text that varies. The office part 0 is "This is your office. There's not much here aside from a desk with your work on it.".
-The description of r_2 is "[office part 0]".
+The description of r_3 is "[office part 0]".
 
-The r_0 is mapped east of r_2.
+The r_0 is mapped east of r_3.
+The internal name of r_2 is "storecloset".
+The printed name of r_2 is "-= Storecloset =-".
+The storecloset part 0 is some text that varies. The storecloset part 0 is "This is the storage room where you keep the doodads. There is one last doodad.".
+The description of r_2 is "[storecloset part 0]".
+
+The r_0 is mapped west of r_2.
 The internal name of r_1 is "lobby".
 The printed name of r_1 is "-= Lobby =-".
 The lobby part 0 is some text that varies. The lobby part 0 is "This is the clerk office lobby.".
@@ -274,14 +277,14 @@ The description of r_1 is "[lobby part 0]".
 
 The r_0 is mapped south of r_1.
 
-The f_0 and the f_1 are foods.
-The f_0 and the f_1 are privately-named.
-The fo_0 and the fo_1 and the fo_2 and the fo_3 are waybills.
-The fo_0 and the fo_1 and the fo_2 and the fo_3 are privately-named.
+The f_0 and the f_1 and the f_2 are foods.
+The f_0 and the f_1 and the f_2 are privately-named.
+The fo_0 and the fo_1 and the fo_2 are waybills.
+The fo_0 and the fo_1 and the fo_2 are privately-named.
 The pr_0 and the pr_1 and the pr_2 are person-likes.
 The pr_0 and the pr_1 and the pr_2 are privately-named.
-The r_0 and the r_2 and the r_1 are rooms.
-The r_0 and the r_2 and the r_1 are privately-named.
+The r_0 and the r_3 and the r_2 and the r_1 are rooms.
+The r_0 and the r_3 and the r_2 and the r_1 are privately-named.
 
 The description of pr_0 is "This person is your coworker. They look stressed.".
 The printed name of pr_0 is "coworker".
@@ -307,43 +310,40 @@ The pr_2 is not aided.
 The description of f_0 is "That's a [noun]!".
 The printed name of f_0 is "berry".
 Understand "berry" as f_0.
-The f_0 is in r_2.
+The f_0 is in r_3.
 The description of f_1 is "That's a [noun]!".
 The printed name of f_1 is "carrot".
 Understand "carrot" as f_1.
 The f_1 is in r_1.
+The description of f_2 is "You couldn't pay me to eat that [noun].".
+The printed name of f_2 is "apple".
+Understand "apple" as f_2.
+The f_2 is in r_2.
+The f_2 is raw.
 The description of fo_0 is "It's a waybill.".
-The printed name of fo_0 is "red waybill".
-Understand "red waybill" as fo_0.
+The printed name of fo_0 is "red receipt".
+Understand "red receipt" as fo_0.
 Understand "red" as fo_0.
-Understand "waybill" as fo_0.
-The fo_0 is in r_2.
+Understand "receipt" as fo_0.
+The fo_0 is in r_3.
 The fo_0 is not stamped.
 The fo_0 is stampable.
 The description of fo_1 is "It's a form.".
-The printed name of fo_1 is "blue waybill".
-Understand "blue waybill" as fo_1.
+The printed name of fo_1 is "blue ticket".
+Understand "blue ticket" as fo_1.
 Understand "blue" as fo_1.
-Understand "waybill" as fo_1.
-The fo_1 is in r_2.
+Understand "ticket" as fo_1.
+The fo_1 is in r_1.
 The fo_1 is not stamped.
 The fo_1 is stampable.
 The description of fo_2 is "It's a form.".
-The printed name of fo_2 is "green waybill".
-Understand "green waybill" as fo_2.
+The printed name of fo_2 is "green formbill".
+Understand "green formbill" as fo_2.
 Understand "green" as fo_2.
-Understand "waybill" as fo_2.
+Understand "formbill" as fo_2.
 The fo_2 is in r_2.
 The fo_2 is not stamped.
 The fo_2 is stampable.
-The description of fo_3 is "It's a form.".
-The printed name of fo_3 is "yellow waybill".
-Understand "yellow waybill" as fo_3.
-Understand "yellow" as fo_3.
-Understand "waybill" as fo_3.
-The fo_3 is in r_2.
-The fo_3 is not stamped.
-The fo_3 is stampable.
 
 
 The player is in r_1.
@@ -351,58 +351,46 @@ The player is in r_1.
 The quest0 completed is a truth state that varies.
 The quest0 completed is usually false.
 
-Test quest0_0 with "go south / go west / take blue waybill / stamp blue waybill"
+Test quest0_0 with "take blue ticket / stamp blue ticket / take carrot"
 
 Every turn:
 	if quest0 completed is true:
 		do nothing;
-	else if The player is in r_0 and The pr_0 is in r_0 and The pr_0 is aided:
+	else if The pr_0 is aided:
 		end the story; [Lost]
-	else if The fo_1 is stamped:
+	else if The player is in r_1 and The player carries the f_1:
 		increase the score by 1; [Quest completed]
 		Now the quest0 completed is true;
 
 The quest1 completed is a truth state that varies.
 The quest1 completed is usually false.
 
-Test quest1_0 with "go south / go west / take red waybill / stamp red waybill"
+Test quest1_0 with "go south / go west / take berry"
 
 Every turn:
 	if quest1 completed is true:
 		do nothing;
-	else if The player is in r_1 and The pr_2 is in r_1 and The pr_2 is aided:
+	else if The pr_1 is aided:
 		end the story; [Lost]
-	else if The fo_0 is stamped:
+	else if The player is in r_3 and The player carries the f_0:
 		increase the score by 1; [Quest completed]
 		Now the quest1 completed is true;
 
 The quest2 completed is a truth state that varies.
 The quest2 completed is usually false.
 
-Test quest2_0 with "go south / go west / take green waybill / stamp green waybill"
+Test quest2_0 with "go south / go east / take apple"
 
 Every turn:
 	if quest2 completed is true:
 		do nothing;
-	else if The player is in r_0 and The pr_1 is in r_0 and The pr_1 is aided:
+	else if The pr_2 is aided:
 		end the story; [Lost]
-	else if The fo_2 is stamped:
+	else if The player is in r_2 and The player carries the f_2:
 		increase the score by 1; [Quest completed]
 		Now the quest2 completed is true;
 
-The quest3 completed is a truth state that varies.
-The quest3 completed is usually false.
-
-Test quest3_0 with "go south / go west / take red waybill / take green waybill / take blue waybill / stamp red waybill / stamp blue waybill / stamp green waybill"
-
-Every turn:
-	if quest3 completed is true:
-		do nothing;
-	else if The fo_2 is stamped:
-		increase the score by 1; [Quest completed]
-		Now the quest3 completed is true;
-
-Use scoring. The maximum score is 4.
+Use scoring. The maximum score is 3.
 This is the simpler notify score changes rule:
 	If the score is not the last notified score:
 		let V be the score - the last notified score;
@@ -569,9 +557,9 @@ The last property-aggregation rule (this is the print aggregated properties rule
 		rule succeeds;
 	rule fails;
 
-The objective part 0 is some text that varies. The objective part 0 is "Hello and welcome to the amazing text based world that is TextWorld!! Here is your task for today. First, it would be fantastic if you could make an effort to take a trip south. With that over with, m".
-The objective part 1 is some text that varies. The objective part 1 is "ake an effort to go west. That done, recover the red waybill from the floor of the office. Having taken the red waybill, lift the green waybill from the floor of the office. After that, lift the blue ".
-The objective part 2 is some text that varies. The objective part 2 is "waybill from the floor of the office. And then, stamp the red waybill. Then, stamp the blue waybill. Then, stamp the green waybill. And if you do that, you're the winner!".
+The objective part 0 is some text that varies. The objective part 0 is "Welcome to TextWorld! First off, if it's not too much trouble, I need you to pick-up the carrot from the floor of the lobby. And then, attempt to head south. After that, make an effort to head west. F".
+The objective part 1 is some text that varies. The objective part 1 is "ollowing that, lift the berry from the floor of the office. If you can get your hands on the berry, make an effort to move east. Then, attempt to go east. After that, pick-up the apple from the floor ".
+The objective part 2 is some text that varies. The objective part 2 is "of the storecloset. That's it!".
 
 An objective is some text that varies. The objective is "[objective part 0][objective part 1][objective part 2]".
 Printing the objective is an action applying to nothing.

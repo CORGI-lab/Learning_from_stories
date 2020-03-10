@@ -1,4 +1,4 @@
-#thing-like
+#waybill
 type fo : o {
     predicates {
         stampable(fo);
@@ -8,7 +8,7 @@ type fo : o {
     }
 
     rules {
-        stamp :: in(fo, I) & stampable(fo) -> stamped(fo);
+        stamp :: in(fo, I) & not_stamped(fo) -> stamped(fo);
     }
 
     constraints {
@@ -37,12 +37,8 @@ type fo : o {
             Understand "stamp [something]" as stamping. 
             stamping is an action applying to a thing. 
 
-            Before stamping when the noun is not stampable:
-                say "Can only stamp form-like objects.";
-                rule fails.
-
             Carry out stamping: 
-                if a waybill (called tx) is stampable: 
+                if a waybill (called tx) is not stamped: 
                     say "You stamp it.";
                     Now the tx is stamped; 
             After stamping: 

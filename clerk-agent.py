@@ -122,7 +122,7 @@ class CommandScorer(nn.Module):
 
 class NeuralAgent:
     """ Simple Neural Agent for playing TextWorld games. """
-    MAX_VOCAB_SIZE = 100
+    MAX_VOCAB_SIZE = 150
     UPDATE_FREQUENCY = 10
     LOG_FREQUENCY = 1000
     GAMMA = 0.9
@@ -133,8 +133,8 @@ class NeuralAgent:
         self.id2word = ["<PAD>", "<UNK>"]
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
-        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=256)
-        self.optimizer = optim.Adam(self.model.parameters(), 0.0003)
+        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=512)
+        self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
         
         self.mode = "test"
     

@@ -199,10 +199,13 @@ class Inform7Game:
         for action in actions:
             command = "None"
             if action is not None:
+
                 if hasattr(action, "template") and action.template is not None:
                     mapping = {var.name: self.entity_infos[var.name].name for var in action.variables}
                     command = action.template.format(**mapping)
                 else:
+                    print("ERROR!")
+                    print(action)
                     msg = ("Using slower text commands from action generation."
                            " Regenerate your games, to get a faster version.")
                     warnings.warn(msg, TextworldInform7Warning)

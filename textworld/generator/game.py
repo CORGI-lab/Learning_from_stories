@@ -395,6 +395,7 @@ class Game:
         policy = GameProgression(self).winning_policy
         if policy:
             win_event = Event(actions=policy)
+            print(policy)
             self.main_quest = Quest(win_events=[win_event])
 
         self.change_grammar(grammar)

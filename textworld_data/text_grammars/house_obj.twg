@@ -50,7 +50,7 @@ rest_(r)_adj_type_1:cozy;relaxing;pleasant;sleepy
 rest_(r)_noun_type_2:lounge;bar;parlor;salon;playroom;recreation zone
 rest_(r)_adj_type_2:fun;entertaining;exciting;well lit
 work_(r):#work_(r)_adj# | #work_(r)_noun#
-work_(r)_noun:office;studio;workshop;cubicle;study;counter;lobby;outside
+work_(r)_noun:office;studio;workshop;cubicle;study;counter;lobby;outside;storecloset
 work_(r)_adj:silent;austere;serious;still
 
 hot-adj:super;unreasonably;absurdly;alarmingly;upsettingly
@@ -211,7 +211,7 @@ work_(o)_noun:#work_(o)_noun_type_1#;#work_(o)_noun_type_2#;#work_(o)_noun_type_
 work_(o)_adj:#work_(o)_adj_type_1#;#work_(o)_adj_type_2#;#work_(o)_adj_type_3#;#work_(o)_adj_type_4#
 #utensil
 work_(o)_noun_type_1:pen;pencil;staple;mug;disk;cd;book;backup calendar;waybill
-work_(o)_adj_type_1:new;old;used;dusty;clean;large;small;fancy;plain;ornate;dirty;elegant;immaculate;simple;hefty;modest;gaudy;decorated;austere
+work_(o)_adj_type_1:new;old;used;dusty;clean;large;small;fancy;plain;ornate;dirty;elegant;immaculate;simple;hefty;modest;gaudy;decorated;austere;red;blue;green;purple;orange;yellow;black;pink;white;cyan
 #electronic
 work_(o)_noun_type_2:printer;mouse;keyboard;laptop;desktop computer;telephone
 work_(o)_adj_type_2:fancy;broken;operational;working
@@ -221,10 +221,6 @@ work_(o)_adj_type_3:heartwarming;hilarious;mind-expanding;out of date;typo-riddl
 #device for using another device
 work_(o)_noun_type_4:stapler;printer;mouse;keyboard;folder;binder
 work_(o)_adj_type_4:operational;broken;expensive;useless;outmoded
-stamp_(o)_noun_type_1:waybill
-stamp_(o)_adj_type_1:red;blue;green;purple;orange;yellow;black;pink;white;cyan
-aid_(o)_noun_type_1:person;customer;coworker
-aid_(o)_adj_type_1:confused;tired;scared;lost;hurt;annoyed
 
 # Food
 # Each roomType must have specific food
@@ -244,6 +240,21 @@ aid_(o)_adj_type_1:confused;tired;scared;lost;hurt;annoyed
 (f)_adj_bad:aging;half-eaten;rotting
 (f)_adj_neutral:frozen;large;small;massive;tiny;hefty;sizable;dried;dry;pureed
 berry:straw;blue;rasp;black;elder;boysen;lingon;huckle;logan;cran;goji;goose
+
+
+(fo):#(fo)_adj# | #(fo)_noun#
+(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;
+(fo)_noun:waybill;form;receipt;list;ticket;formbill
+
+(pr):#(pr)_adj# | #(pr)_noun#
+(pr)_adj:confused,angry,stressed,upset,happy
+(pr)_noun:person;customer;coworker;man;woman;shopper
+
+
+
+
+work_(pr):#(pr)#
+work_(fo):#(fo)#
 
 #Clean food
 #----------
@@ -293,18 +304,6 @@ out_in_place:out of place;to fit in;well matched to everything else
 restaurant:Burger#place#
 place:town;village;hamlet;burg;ville;City
 (t)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
-obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
-looks_seems:looks;seems;appears;appears to be;would seem to be
-out_in_place:out of place;to fit in;well matched to everything else
-restaurant:Burger#place#
-place:town;village;hamlet;burg;ville;City
-(pr)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
-obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
-looks_seems:looks;seems;appears;appears to be;would seem to be
-out_in_place:out of place;to fit in;well matched to everything else
-restaurant:Burger#place#
-place:town;village;hamlet;burg;ville;City
-(fo)_desc:The [noun] is #obj_what#.;The [noun] #looks_seems# #out_in_place# here
 obj_what:unremarkable;clean;dirty;modern;antiquated;well-used;brand new;expensive looking;cheap looking
 looks_seems:looks;seems;appears;appears to be;would seem to be
 out_in_place:out of place;to fit in;well matched to everything else

@@ -61,7 +61,7 @@ def capture_stdout():
 def _compile_test_game(game):
 	grammar_flags = {
 		"theme": "house",
-		"include_adj": False,
+		"include_adj": True,
 		"only_last_action": True,
 		"blend_instructions": True,
 		"blend_descriptions": True,
@@ -133,12 +133,12 @@ def build_and_compile_papersplease():
 	counter = M.new_room("counter")
 	lobby = M.new_room("lobby")
 	#outside = M.new_room("outside")
-	#storage = M.new_room("storage")
+	storage = M.new_room("storecloset")
 	office = M.new_room("office")
 	M.set_player(lobby)
 	#c1 = M.connect(outside.south, lobby.north)
 	c2 = M.connect(counter.north, lobby.south)
-	#c3 = M.connect(counter.east, storage.west)
+	c3 = M.connect(counter.east, storage.west)
 	c4 = M.connect(counter.west, office.east)
 
 	# door1 = M.new_door(c1, name="glass door")
@@ -166,7 +166,7 @@ def build_and_compile_papersplease():
 	counter.infos.desc = "You are now behind your counter."
 	lobby.infos.desc = "This is the clerk office lobby."
 	office.infos.desc = "This is your office. There's not much here aside from a desk with your work on it."
-	#storage.infos.desc = "This is the storage room where you keep the doodads. There is one last doodad."
+	storage.infos.desc = "This is the storage room where you keep the doodads. There is one last doodad."
 
 	#M.add_distractors(10)
 
@@ -183,26 +183,26 @@ def build_and_compile_papersplease():
 	#counter.add(supporter2)
 	#office.add(supporter)
 
-	form1 = M.new(type="fo", name = 'red waybill') 
+	form1 = M.new(type="fo", name = 'red receipt') 
 	form1.infos.desc = "It's a waybill."
-	form2 = M.new(type="fo", name = 'blue waybill') 
+	form2 = M.new(type="fo", name = 'blue ticket') 
 	form2.infos.desc = "It's a form."
-	form3 = M.new(type="fo", name = 'green waybill') 
+	form3 = M.new(type="fo", name = 'green formbill') 
 	form3.infos.desc = "It's a form."
-	form4 = M.new(type="fo", name = 'yellow waybill') 
-	form4.infos.desc = "It's a form."
-	form5 = M.new(type="fo", name = 'orange waybill') 
-	form5.infos.desc = "It's a form."
-	form6 = M.new(type="fo", name = 'purple waybill') 
-	form6.infos.desc = "It's a long form."
-	form7 = M.new(type="fo", name = 'cyan waybill') 
-	form7.infos.desc = "It's a long form."
-	form8 = M.new(type="fo", name = 'pink waybill') 
-	form8.infos.desc = "It's a long form."
-	form9 = M.new(type="fo", name = 'white waybill') 
-	form9.infos.desc = "It's a long form."
-	form10 = M.new(type="fo", name = 'black waybill') 
-	form10.infos.desc = "It's a long waybill."
+	#form4 = M.new(type="fo", name = 'yellow form') 
+	#form4.infos.desc = "It's a form."
+	# form5 = M.new(type="fo", name = 'orange waybill') 
+	# form5.infos.desc = "It's a form."
+	# form6 = M.new(type="fo", name = 'purple waybill') 
+	# form6.infos.desc = "It's a long form."
+	# form7 = M.new(type="fo", name = 'cyan waybill') 
+	# form7.infos.desc = "It's a long form."
+	# form8 = M.new(type="fo", name = 'pink waybill') 
+	# form8.infos.desc = "It's a long form."
+	# form9 = M.new(type="fo", name = 'white waybill') 
+	# form9.infos.desc = "It's a long form."
+	# form10 = M.new(type="fo", name = 'black waybill') 
+	# form10.infos.desc = "It's a long waybill."
 	#stove = M.new(type="oven", name = "oven")
 	#stove.infos.desc = "this is an oven. you can cook your food"
 	#supporter.add(food)  # When added directly to a room, portable objects are put on the floor.
@@ -238,9 +238,9 @@ def build_and_compile_papersplease():
 	counter.add(person)
 
 	office.add(form1)
-	office.add(form2)
-	office.add(form3)
-	office.add(form4)
+	lobby.add(form2)
+	storage.add(form3)
+	#office.add(form4)
 	#office.add(form5)
 
 	#office.add(form6)
@@ -267,13 +267,14 @@ def build_and_compile_papersplease():
 	food3 = M.new(type="f", name = 'carrot') 
 	lobby.add(food3)
 	food2 = M.new(type="f", name = 'apple') 
-	supporter.add(food2)
+	storage.add(food2)
+	#supporter.add(food2)
 	M.add_fact("raw",food2)
 
 	M.add_fact("not_stamped",form1)
 	M.add_fact("not_stamped",form2)
 	M.add_fact("not_stamped",form3)
-	M.add_fact("not_stamped",form4)
+	#M.add_fact("not_stamped",form4)
 	# M.add_fact("not_stamped",form5)
 	# M.add_fact("not_stamped",form6)
 	# M.add_fact("not_stamped",form7)
@@ -291,7 +292,7 @@ def build_and_compile_papersplease():
 	M.add_fact("stampable",form1)
 	M.add_fact("stampable",form2)
 	M.add_fact("stampable",form3)
-	M.add_fact("stampable",form4)
+	#M.add_fact("stampable",form4)
 	# M.add_fact("stampable",form5)
 	# M.add_fact("stampable",form6)
 	# M.add_fact("stampable",form7)
@@ -300,12 +301,15 @@ def build_and_compile_papersplease():
 	# M.add_fact("stampable",form10)
 	#counter.add(supporter2)
 	#office.add(supporter)
-	quest1_cmds = ["go south", "go west", "take blue waybill", "stamp blue waybill"]
+
+	#quest4a_cmds = ["go south", "go west", "take yellow ticket",  "stamp yellow ticket"]
+	#q4a = M.new_event_using_commands(quest4a_cmds)
+	quest1_cmds = ["take blue ticket","stamp blue ticket","take carrot" ]
 
 	q1= M.new_event_using_commands(quest1_cmds)
-	#f1 = Event(conditions={M.new_fact("aided", cw)})
-	quest1_fail = ["go south", "aid coworker"]
-	f1 = M.new_event_using_commands(quest1_fail)
+	f1 = Event(conditions={M.new_fact("aided", cw)})
+	#quest1_fail = ["go south", "aid coworker"]
+	#f1 = M.new_event_using_commands(quest1_fail)
 
 	quest1 = Quest(win_events=[q1],
 				   fail_events=[f1],
@@ -313,13 +317,13 @@ def build_and_compile_papersplease():
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["go south", "go west", "take red waybill", "stamp red waybill"]
+	quest2_cmds = ["go south", "go west", "stamp red receipt", "take berry"]
 	q2 = M.new_event_using_commands(quest2_cmds)
 
-	#f2 = Event(conditions={M.new_fact("aided", person)})
+	f2 = Event(conditions={M.new_fact("aided", person)})
 
-	quest2_fail = ["aid shopper"]
-	f2 = M.new_event_using_commands(quest2_fail)
+	#quest2_fail = ["aid shopper"]
+	#f2 = M.new_event_using_commands(quest2_fail)
 
 	quest2 = Quest(win_events=[q2],
 				   fail_events=[f2],
@@ -327,12 +331,12 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest2)
 
-	quest3_cmds = ["go south", "go west", "take green waybill", "stamp green waybill"]
+	quest3_cmds = ["go south", "go east",  "stamp green formbill", "take apple"]
 	q3 = M.new_event_using_commands(quest3_cmds)
 
 	quest3_fail = ["go south", "aid customer"]
-	f3 = M.new_event_using_commands(quest3_fail)
-	#f3 = Event(conditions={M.new_fact("aided", person2)})
+	#f3 = M.new_event_using_commands(quest3_fail)
+	f3 = Event(conditions={M.new_fact("aided", person2)})
 
 	quest3 = Quest(win_events=[q3],
 				   fail_events=[f3],
@@ -340,18 +344,21 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest3)
 
-	quest4_cmds = ["go south", "go west", "take red waybill", "take green waybill", "take blue waybill", "stamp red waybill", "stamp blue waybill", "stamp green waybill"]
-	q4 = M.new_event_using_commands(quest4_cmds)
-
+	#quest4_cmds = ["go south", "go west", "take yellow waybill",  "stamp yellow waybill"]
+	#q4 = M.new_event_using_commands(quest4_cmds)
+	#quest4b_cmds = ["go south", "go west", "take red waybill", "take green waybill", "take blue waybill", "stamp red waybill", "stamp blue waybill", "stamp green waybill"]
+	#q4b = M.new_event_using_commands(quest4b_cmds)
+	#quest4c_cmds = ["go south", "go west", "take red waybill", "take green waybill", "take blue waybill", "stamp red waybill",  "stamp green waybill", "stamp blue waybill"]
+	#q4c = M.new_event_using_commands(quest4c_cmds)
 	#f3 = Event(conditions={M.new_fact("aided", person2)})
 	#quest4_fail = []
 	#f4 = M.new_event_using_commands(quest4_fail)
 
-	quest4 = Quest(win_events=[q4],
-				   fail_events=[],
-				   reward=1)
+	#quest4 = Quest(win_events=[q4],
+	#			   fail_events=[],
+	#			   reward=1)
 
-	M.quests.append(quest4)
+	#M.quests.append(quest4)
 
 
 	# quest1_cmds = ["look around", "go south", "go south", "go west", "take black waybill", "stamp black waybill"]
@@ -385,10 +392,10 @@ def build_and_compile_papersplease():
 	# 			   fail_events=[f3,f2,f1],
 	# 			   reward=1)
 
-	# M.quests.append(quest3)
+	#M.quests = [quest1]
 	
 	game = M.build()
-	game.main_quest = quest4 
+	#game.main_quest = quest1
 	game_file = _compile_test_game(game)
 	return game, game_file
 	
