@@ -3,11 +3,10 @@ type pr : t {
     predicates {
         not_asked(pr);
         asked(pr);
-        attacked(pr);
     }
 
     rules {
-        attack/pr   :: $at(P, r) & $at(pr, r) -> attacked(pr);
+        attack/pr   :: $at(P, r) & $at(pr, r) & not_asked(pr) -> asked(pr);
         ask/pr :: $at(P, r) & $at(pr,r) & $in(f, I) & not_asked(pr) -> asked(pr);
     }
     
@@ -18,11 +17,10 @@ type pr : t {
     inform7 {
         type {
             kind :: "person-like";
-            definition :: "person-like can be attacked. person-like can be asked. person-like is fixed in place.";
+            definition :: "person-like can be asked. person-like is fixed in place.";
         }
 
         predicates {
-            attacked(pr)  :: "The {pr} is attacked";
             asked(pr) :: "The {pr} is asked";
             not_asked(pr) :: "The {pr} is not asked";
         }
