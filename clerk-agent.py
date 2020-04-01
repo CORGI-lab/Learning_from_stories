@@ -23,7 +23,7 @@ from glob import glob
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def play(agent, path, max_step=500, nb_episodes=500, verbose=True):
+def play(agent, path, max_step=100, nb_episodes=100, verbose=True):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -133,8 +133,8 @@ class NeuralAgent:
         self.id2word = ["<PAD>", "<UNK>"]
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
-        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=512)
-        self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
+        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=256)
+        self.optimizer = optim.Adam(self.model.parameters(), 0.0003)
         
         self.mode = "test"
     
@@ -283,7 +283,7 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", nb_episodes=25000, verbose=True)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", nb_episodes=500, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.
