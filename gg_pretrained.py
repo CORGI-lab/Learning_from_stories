@@ -36,8 +36,8 @@ class ggModel():
     def __init__(self):
         self.args = {
             'data_dir': 'data/',
-            'model_type':  'xlnet',
-            'model_name': 'xlnet-base-cased',
+            'model_type':  'bert',
+            'model_name': 'bert-base-cased',
             'task_name': 'binary',
             'output_dir': 'outputs/',
             'cache_dir': 'cache/',
@@ -74,8 +74,8 @@ class ggModel():
         self.tokenizer = tokenizer_class.from_pretrained(self.args['model_name'])
         checkpoints = [self.args['output_dir']]
         checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(self.args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
-        checkpoint = checkpoints[0]
-        self.model = model_class.from_pretrained(checkpoint)
+        #checkpoint = checkpoints[0]
+        self.model = model_class.from_pretrained(self.args['output_dir'])
         self.model.to(self.device)
         self.global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
 
