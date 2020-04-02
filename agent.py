@@ -329,7 +329,8 @@ def play(agent, gg_premodel, path, max_step=50, nb_episodes=10, verbose=True):
             print(avg_scores)
             print(msg.format(np.mean(avg_moves), np.mean(avg_scores), infos["max_score"]))
 
-game_path = "./tw_games/super_hero_1.ulx"
+#game_path = "./tw_games/super_hero_1.ulx"
+game_path = "./tw_games/cg.ulx"
 agent = NeuralAgent()
 gg_model = ggModel()
 step_size = 750
@@ -340,7 +341,7 @@ start_time = time()
 # print(os.path.realpath("./games/levelMedium_v1.ulx"))
 print(os.path.realpath(game_path))
 # play(agent, "./games/levelMedium_v1.ulx", max_step=step_size, nb_episodes=2000, verbose=False)
-play(agent, gg_model, game_path, max_step=step_size, nb_episodes=2000, verbose=False)
+play(agent, gg_model, game_path, max_step=step_size, nb_episodes=200, verbose=False)
 print("Trained in {:.2f} secs".format(time() - start_time))
 
 print(' =====  Test  ========================================================= ')
@@ -348,7 +349,7 @@ agent.test(method='random')
 # play(agent, "./games/levelMedium_v1.ulx", max_step=step_size)  # Medium level game.
 play(agent, gg_model, game_path, max_step=step_size)  # Medium level game.
 
-save_path = "./model/levelMedium_v1_random.npy"
+save_path = "./model/clerk-test-4-2-20.npy"
 if not os.path.exists(os.path.dirname(save_path)):
     os.mkdir(os.path.dirname(save_path))
 
