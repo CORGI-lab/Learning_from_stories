@@ -21,7 +21,11 @@ from glob import glob
 #tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+print(torch.cuda.is_available(), device)
+
+torch.cuda.set_device(0)
 
 def play(agent, path, max_step=100, nb_episodes=100, verbose=True):
     infos_to_request = agent.infos_to_request
@@ -72,27 +76,31 @@ def play(agent, path, max_step=100, nb_episodes=100, verbose=True):
         else:
             print(msg.format(np.mean(avg_moves), np.mean(avg_scores), infos["max_score"]))
 
-class CommandScorer(nn.Module):
+class CommandScorer(torch.nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CommandScorer, self).__init__()
         torch.manual_seed(42)  # For reproducibility
-        self.embedding    = nn.Embedding(input_size, hidden_size)
-        self.encoder_gru  = nn.GRU(hidden_size, hidden_size)
-        self.cmd_encoder_gru  = nn.GRU(hidden_size, hidden_size)
-        self.state_gru    = nn.GRU(hidden_size, hidden_size)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print(torch.cuda.is_available())
+        print(device)
+        self.embedding    = torch.nn.Embedding(input_size, hidden_size).cuda()
+        self.encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).cuda()
+        self.cmd_encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).cuda()
+        self.state_gru    = torch.nn.GRU(hidden_size, hidden_size).cuda()
         self.hidden_size  = hidden_size
-        self.state_hidden = torch.zeros(1, 1, hidden_size, device=device)
-        self.critic       = nn.Linear(hidden_size, 1)
-        self.att_cmd      = nn.Linear(hidden_size * 2, 1)
+        self.state_hidden = torch.zeros(1, 1, hidden_size).cuda()
+        self.critic       = torch.nn.Linear(hidden_size, 1).cuda()
+        self.att_cmd      = torch.nn.Linear(hidden_size * 2, 1).cuda()
 
     def forward(self, obs, commands, **kwargs):
         input_length = obs.size(0)
         batch_size = obs.size(1)
         nb_cmds = commands.size(1)
 
-        embedded = self.embedding(obs)
+        embedded = self.embedding(obs).cuda()
         encoder_output, encoder_hidden = self.encoder_gru(embedded)
-        state_output, state_hidden = self.state_gru(encoder_hidden, self.state_hidden)
+        encoder_hidden.cuda()
+        state_output, state_hidden = self.state_gru(encoder_hidden, self.state_hidden.cuda())
         self.state_hidden = state_hidden
         value = self.critic(state_output)
 
@@ -110,14 +118,14 @@ class CommandScorer(nn.Module):
         cmd_selector_input = torch.cat([cmd_selector_input, cmds_encoding_last_states], dim=-1)
 
         # Compute one score per command.
-        scores = F.relu(self.att_cmd(cmd_selector_input)).squeeze(-1)  # 1 x Batch x cmds
+        scores = torch.nn.functional.relu(self.att_cmd(cmd_selector_input)).squeeze(-1)  # 1 x Batch x cmds
 
-        probs = F.softmax(scores, dim=2)  # 1 x Batch x cmds
+        probs = torch.nn.functional.softmax(scores, dim=2)  # 1 x Batch x cmds
         index = probs[0].multinomial(num_samples=1).unsqueeze(0) # 1 x batch x indx
         return scores, index, value
 
     def reset_hidden(self, batch_size):
-        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size, device=device)
+        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size)
 
 
 class NeuralAgent:
