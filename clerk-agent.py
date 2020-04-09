@@ -5,6 +5,9 @@ import textworld
 import textworld.gym
 from textworld import EnvInfos
 
+from transformers import BertTokenizer, BertConfig, BertForSequenceClassification
+
+import torch
 import re
 from typing import List, Mapping, Any, Optional
 from collections import defaultdict
@@ -16,12 +19,29 @@ import torch.nn.functional as F
 
 import os
 from glob import glob
-
+import csv
 #tw-extract -v entities /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #.....   avg. steps:  73.7; avg. score:  2.7 / 3.
 #Trained in 282.13 secs
+# 
+#config = BertConfig.from_json_file('./models/gg.json')
+#ggmodel = BertForSequenceClassification('./models/gg.bin')
+state_dict = torch.load('./models/pytorch_model.bin')
+#ggmodel.load_state_dict(state_dict)
+tokenizer = BertTokenizer('./models/vocab.txt', do_lower_case=True)
+
+GGCLASSES = ['negative','positive']
+ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=None, from_tf=False, state_dict=state_dict)
+
+input_ids = torch.tensor(tokenizer.encode("He always cleans his room", add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+labels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
+outputs = ggmodel(input_ids, labels=labels)
+loss, logits = outputs[:2]
+print("BERT TEST OUT: {},{}".format(loss,logits))
+classification_index = max(range(len(logits[0])), key=logits[0].__getitem__)
+print(GGCLASSES[classification_index])
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -29,7 +49,7 @@ print(torch.cuda.is_available(), device)
 
 torch.cuda.set_device(0)
 
-def play(agent, path, max_step=100, nb_episodes=100, verbose=True):
+def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -219,6 +239,18 @@ class NeuralAgent:
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
         #print(action)
+        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+        glabels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
+        goutputs = ggmodel(ginput_ids, labels=glabels)
+        gloss, glogits = goutputs[:2]
+        #print("BERT TEST OUT: {},{}".format(loss,logits))
+        classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
+        #print(GGCLASSES[classification_index])
+        BERT_reward = 0
+        if GGCLASSES[classification_index] == 'negative':
+            BERT_reward = glogits[0][0] * -100
+        else:
+            BERT_reward = glogits[0][1] * 100
 
         if self.mode == "test":
             if done:
@@ -228,7 +260,8 @@ class NeuralAgent:
         self.no_train_step += 1
         
         if self.transitions:
-            reward = (score * 100 - self.last_score) - moves  # Reward is the gain/loss in score.
+            reward = (score * 100 - self.last_score) - moves + BERT_reward  # Reward is the gain/loss in score.
+            #A2C-base, mixed binary, mixed diff, pos only, neg only
             #reward = (score * 100) - moves
             #print(reward)
             self.last_score = score
@@ -236,9 +269,11 @@ class NeuralAgent:
                 print('won')
                 reward += 1000
                 reward -= moves
+                reward += BERT_reward
             if infos["lost"]:
                 reward -= 1000
                 reward -= moves
+                reward += BERT_reward
                 
             self.transitions[-1][0] = reward  # Update reward information.
         
@@ -246,41 +281,45 @@ class NeuralAgent:
         if self.no_train_step % self.UPDATE_FREQUENCY == 0:
             # Update model
             returns, advantages = self._discount_rewards(values)
-            
-            loss = 0
-            for transition, ret, advantage in zip(self.transitions, returns, advantages):
-                reward, indexes_, outputs_, values_ = transition
+            #A2C-base, mixed binary, mixed diff, pos only, neg only
+            with open('gg-confidence-mix-binary-a2c.csv', 'a', newline='') as file:
+                writer = csv.writer(file)
+                loss = 0
+                for transition, ret, advantage in zip(self.transitions, returns, advantages):
+                    reward, indexes_, outputs_, values_ = transition
+                    
+                    advantage        = advantage.detach() # Block gradients flow here.
+                    probs            = F.softmax(outputs_, dim=2)
+                    log_probs        = torch.log(probs)
+                    log_action_probs = log_probs.gather(2, indexes_)
+                    policy_loss      = (-log_action_probs * advantage).sum()
+                    value_loss       = (.5 * (values_ - ret) ** 2.).sum()
+                    entropy     = (-probs * log_probs).sum()
+                    loss += policy_loss + 0.5 * value_loss - 0.1 * entropy
+                    
+                    self.stats["mean"]["reward"].append(reward)
+                    self.stats["mean"]["policy"].append(policy_loss.item())
+                    self.stats["mean"]["value"].append(value_loss.item())
+                    self.stats["mean"]["entropy"].append(entropy.item())
+                    self.stats["mean"]["confidence"].append(torch.exp(log_action_probs).item())
+                    #episode,reward,policy,value,entropy,confidence,score,vocabsize
+                    if self.no_train_step % 1000 == 0:
+                        writer.writerow([self.no_train_step,reward,policy_loss.item(),value_loss.item(),entropy.item(),torch.exp(log_action_probs).item(),score,len(self.id2word)])
+                if self.no_train_step % self.LOG_FREQUENCY == 0:
+                    msg = "{}. ".format(self.no_train_step)
+                    msg += "  ".join("{}: {:.3f}".format(k, np.mean(v)) for k, v in self.stats["mean"].items())
+                    msg += "  " + "  ".join("{}: {}".format(k, np.max(v)) for k, v in self.stats["max"].items())
+                    msg += "  vocab: {}".format(len(self.id2word))
+                    print(msg)
+                    self.stats = {"max": defaultdict(list), "mean": defaultdict(list)}
                 
-                advantage        = advantage.detach() # Block gradients flow here.
-                probs            = F.softmax(outputs_, dim=2)
-                log_probs        = torch.log(probs)
-                log_action_probs = log_probs.gather(2, indexes_)
-                policy_loss      = (-log_action_probs * advantage).sum()
-                value_loss       = (.5 * (values_ - ret) ** 2.).sum()
-                entropy     = (-probs * log_probs).sum()
-                loss += policy_loss + 0.5 * value_loss - 0.1 * entropy
-                
-                self.stats["mean"]["reward"].append(reward)
-                self.stats["mean"]["policy"].append(policy_loss.item())
-                self.stats["mean"]["value"].append(value_loss.item())
-                self.stats["mean"]["entropy"].append(entropy.item())
-                self.stats["mean"]["confidence"].append(torch.exp(log_action_probs).item())
+                loss.backward()
+                nn.utils.clip_grad_norm_(self.model.parameters(), 40)
+                self.optimizer.step()
+                self.optimizer.zero_grad()
             
-            if self.no_train_step % self.LOG_FREQUENCY == 0:
-                msg = "{}. ".format(self.no_train_step)
-                msg += "  ".join("{}: {:.3f}".format(k, np.mean(v)) for k, v in self.stats["mean"].items())
-                msg += "  " + "  ".join("{}: {}".format(k, np.max(v)) for k, v in self.stats["max"].items())
-                msg += "  vocab: {}".format(len(self.id2word))
-                print(msg)
-                self.stats = {"max": defaultdict(list), "mean": defaultdict(list)}
-            
-            loss.backward()
-            nn.utils.clip_grad_norm_(self.model.parameters(), 40)
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-        
-            self.transitions = []
-            self.model.reset_hidden(1)
+                self.transitions = []
+                self.model.reset_hidden(1)
         else:
             # Keep information about transitions for Truncated Backpropagation Through Time.
             self.transitions.append([None, indexes, outputs, values])  # Reward will be set on the next call
@@ -298,7 +337,7 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", nb_episodes=2500, verbose=True)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", nb_episodes=50000, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.
