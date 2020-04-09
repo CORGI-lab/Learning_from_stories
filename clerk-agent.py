@@ -16,38 +16,43 @@ import torch
 import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
-
+from torch.autograd import Variable
 import os
 from glob import glob
 import csv
+
+
 #tw-extract -v entities /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #.....   avg. steps:  73.7; avg. score:  2.7 / 3.
 #Trained in 282.13 secs
 # 
-#config = BertConfig.from_json_file('./models/gg.json')
-#ggmodel = BertForSequenceClassification('./models/gg.bin')
+torch.manual_seed(22)
+
 state_dict = torch.load('./models/pytorch_model.bin')
 #ggmodel.load_state_dict(state_dict)
 tokenizer = BertTokenizer('./models/vocab.txt', do_lower_case=True)
 
 GGCLASSES = ['negative','positive']
-ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=None, from_tf=False, state_dict=state_dict)
+ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=None, from_tf=False, state_dict=state_dict).to("cpu")
 
-input_ids = torch.tensor(tokenizer.encode("He always cleans his room", add_special_tokens=True)).unsqueeze(0)  # Batch size 1
-labels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
-outputs = ggmodel(input_ids, labels=labels)
-loss, logits = outputs[:2]
-print("BERT TEST OUT: {},{}".format(loss,logits))
-classification_index = max(range(len(logits[0])), key=logits[0].__getitem__)
-print(GGCLASSES[classification_index])
+#config = BertConfig.from_json_file('./models/gg.json')
+#ggmodel = BertForSequenceClassification('./models/gg.bin')
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# input_ids = torch.tensor(tokenizer.encode("He always cleans his room", add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+# labels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
+# outputs = ggmodel(input_ids, labels=labels)
+# loss, logits = outputs[:2]
+# print("BERT TEST OUT: {},{}".format(loss,logits))
+# classification_index = max(range(len(logits[0])), key=logits[0].__getitem__)
+# print(GGCLASSES[classification_index])
 
-print(torch.cuda.is_available(), device)
+#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-torch.cuda.set_device(0)
+#print(torch.cuda.is_available(), device)
+
+#torch.cuda.set_device(0)
 
 def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
     infos_to_request = agent.infos_to_request
@@ -101,10 +106,10 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
 class CommandScorer(torch.nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CommandScorer, self).__init__()
-        torch.manual_seed(42)  # For reproducibility
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        print(torch.cuda.is_available())
-        print(device)
+        #torch.manual_seed(42)  # For reproducibility
+        #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        #print(torch.cuda.is_available())
+        #print(device)
         self.embedding    = torch.nn.Embedding(input_size, hidden_size).cuda()
         self.encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).cuda()
         self.cmd_encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).cuda()
@@ -124,30 +129,30 @@ class CommandScorer(torch.nn.Module):
         encoder_hidden.cuda()
         state_output, state_hidden = self.state_gru(encoder_hidden, self.state_hidden.cuda())
         self.state_hidden = state_hidden
-        value = self.critic(state_output)
+        value = self.critic(state_output).cuda()
 
         # Attention network over the commands.
-        cmds_embedding = self.embedding.forward(commands)
-        _, cmds_encoding_last_states = self.cmd_encoder_gru.forward(cmds_embedding)  # 1 x cmds x hidden
+        cmds_embedding = self.embedding.forward(commands).cuda()
+        _, cmds_encoding_last_states = self.cmd_encoder_gru.forward(cmds_embedding) # 1 x cmds x hidden
 
         # Same observed state for all commands.
-        cmd_selector_input = torch.stack([state_hidden] * nb_cmds, 2)  # 1 x batch x cmds x hidden
+        cmd_selector_input = torch.stack([state_hidden] * nb_cmds, 2).cuda()  # 1 x batch x cmds x hidden
 
         # Same command choices for the whole batch.
-        cmds_encoding_last_states = torch.stack([cmds_encoding_last_states] * batch_size, 1)  # 1 x batch x cmds x hidden
+        cmds_encoding_last_states = torch.stack([cmds_encoding_last_states] * batch_size, 1).cuda()  # 1 x batch x cmds x hidden
 
         # Concatenate the observed state and command encodings.
-        cmd_selector_input = torch.cat([cmd_selector_input, cmds_encoding_last_states], dim=-1)
+        cmd_selector_input = torch.cat([cmd_selector_input, cmds_encoding_last_states], dim=-1).cuda()
 
         # Compute one score per command.
-        scores = torch.nn.functional.relu(self.att_cmd(cmd_selector_input)).squeeze(-1)  # 1 x Batch x cmds
+        scores = torch.nn.functional.relu(self.att_cmd(cmd_selector_input)).squeeze(-1).cuda()  # 1 x Batch x cmds
 
-        probs = torch.nn.functional.softmax(scores, dim=2)  # 1 x Batch x cmds
-        index = probs[0].multinomial(num_samples=1).unsqueeze(0) # 1 x batch x indx
+        probs = torch.nn.functional.softmax(scores, dim=2).cuda()  # 1 x Batch x cmds
+        index = probs[0].multinomial(num_samples=1).unsqueeze(0).cuda() # 1 x batch x indx
         return scores, index, value
 
     def reset_hidden(self, batch_size):
-        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size)
+        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size).cuda()
 
 
 class NeuralAgent:
@@ -209,8 +214,8 @@ class NeuralAgent:
         for i, text in enumerate(texts):
             padded[i, :len(text)] = text
 
-        padded_tensor = torch.from_numpy(padded).type(torch.long).to(device)
-        padded_tensor = padded_tensor.permute(1, 0) # Batch x Seq => Seq x Batch
+        padded_tensor = torch.from_numpy(padded).type(torch.long).cuda()
+        padded_tensor = padded_tensor.permute(1, 0).cuda() # Batch x Seq => Seq x Batch
         return padded_tensor
       
     def _discount_rewards(self, last_values):
@@ -226,10 +231,11 @@ class NeuralAgent:
         return returns[::-1], advantages[::-1]
 
     def act(self, obs: str, score: int, done: bool, moves: int, infos: Mapping[str, Any]) -> Optional[str]:
-        
+        #device = torch.device("cpu")
+        #torch.cuda.set_device(0)
         # Build agent's observation: feedback + look + inventory.
         input_ = "{}\n{}\n{}".format(obs, infos["description"], infos["inventory"])
-        
+
         #print(infos["admissible_commands"])
         # Tokenize and pad the input and the commands to chose from.
         input_tensor = self._process([input_])
@@ -239,7 +245,7 @@ class NeuralAgent:
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
         #print(action)
-        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0)  # Batch size 1
+        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0) # Batch size 1
         glabels = torch.tensor([1]).unsqueeze(0)  # Batch size 1
         goutputs = ggmodel(ginput_ids, labels=glabels)
         gloss, glogits = goutputs[:2]
@@ -284,18 +290,19 @@ class NeuralAgent:
             #A2C-base, mixed binary, mixed diff, pos only, neg only
             with open('gg-confidence-mix-binary-a2c.csv', 'a', newline='') as file:
                 writer = csv.writer(file)
-                loss = 0
+                lx = 0.0000001
+                loss = Variable(torch.tensor(lx), requires_grad = True).cuda()
                 for transition, ret, advantage in zip(self.transitions, returns, advantages):
                     reward, indexes_, outputs_, values_ = transition
                     
-                    advantage        = advantage.detach() # Block gradients flow here.
-                    probs            = F.softmax(outputs_, dim=2)
-                    log_probs        = torch.log(probs)
-                    log_action_probs = log_probs.gather(2, indexes_)
-                    policy_loss      = (-log_action_probs * advantage).sum()
-                    value_loss       = (.5 * (values_ - ret) ** 2.).sum()
-                    entropy     = (-probs * log_probs).sum()
-                    loss += policy_loss + 0.5 * value_loss - 0.1 * entropy
+                    advantage        = advantage.detach().cuda() # Block gradients flow here.
+                    probs            = F.softmax(outputs_, dim=2).cuda()
+                    log_probs        = torch.log(probs).cuda()
+                    log_action_probs = log_probs.gather(2, indexes_).cuda()
+                    policy_loss      = (-log_action_probs * advantage).sum().cuda()
+                    value_loss       = (.5 * (values_ - ret) ** 2.).sum().cuda()
+                    entropy     = (-probs * log_probs).sum().cuda()
+                    loss += policy_loss.long() + 0.5 * value_loss.long() - 0.1 * entropy.long()
                     
                     self.stats["mean"]["reward"].append(reward)
                     self.stats["mean"]["policy"].append(policy_loss.item())
