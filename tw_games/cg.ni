@@ -20,14 +20,39 @@ object-like is portable.
 supporters are fixed in place.
 oven-like is a source of heat.
 food is usually edible. food is cookable. food has a type of cooking. food has a type of cutting. food can be cooked. food can be burned. food can be consumed. food is usually not consumed. food is usually cuttable.
-waybills can be stamped. waybills can be stampable. waybills are portable. waybills can be seen. waybills can be examined. waybills can be on something. waybills are usually not stamped. waybills can be stampless.
-person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided. person-like are usually not aided. person-like is fixed in place.
+waybills can be stamped. waybills can be stampable. waybills can be expired. waybills can be current. waybills are portable. waybills can be seen. waybills can be examined. waybills can be on something. waybills can be stampless.
+person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided.
 stove-like is a source of heat.
 A room has a text called internal name.
 
 
-After examining an open container which contains nothing:
-	say "It's empty.".
+After examining a supporter which contains nothing:
+	say "The [noun] has nothing on it.".
+
+
+Before printing the name of a thing (called the target) while looking, examining or listing contents:
+	say "[bold type][italic type]";
+
+After printing the name of a thing (called the target) while looking, examining or listing contents:
+	say "[roman type]";
+
+
+Understand the command "put" as something new.
+Understand "put [other things] on/onto [something]" as putting it on.
+
+Does the player mean putting something on something (called destination):
+	Let L be the list of touchable supporters;
+	if L is not empty and destination is entry 1 of L:
+		it is very likely;
+	otherwise:
+		it is very unlikely;
+
+Does the player mean inserting something into something (called destination):
+	Let L be the list of touchable containers;
+	if L is not empty and destination is entry 1 of L:
+		it is very likely;
+	otherwise:
+		it is very unlikely;
 
 
 [Drinking liquid]
@@ -182,70 +207,67 @@ Before printing the name of a food (called the food item) while looking, examini
 
 
 
-Understand the command "put" as something new.
-Understand "put [other things] on/onto [something]" as putting it on.
+After examining an open container which contains nothing:
+	say "It's empty.".
 
-Does the player mean putting something on something (called destination):
-	Let L be the list of touchable supporters;
-	if L is not empty and destination is entry 1 of L:
-		it is very likely;
-	otherwise:
-		it is very unlikely;
-
-Does the player mean inserting something into something (called destination):
-	Let L be the list of touchable containers;
-	if L is not empty and destination is entry 1 of L:
-		it is very likely;
-	otherwise:
-		it is very unlikely;
-
-
-Before printing the name of a thing (called the target) while looking, examining or listing contents:
-	say "[bold type][italic type]";
-
-After printing the name of a thing (called the target) while looking, examining or listing contents:
-	say "[roman type]";
-
-
-[Asking]
-Understand the command "ask" as something new. 
-Understand "ask [something]" as asking. 
-asking is an action applying to a thing. 
-
-Carry out asking: 
-	if a person-like (called tx) is askable: 
-		say "The person is trying to get something done but is having a hard time...";
-		Now the tx is asked;
-After asking: 
-	Say "[the noun] they could use your aid.";
 
 [Aiding]
-Understand the command "aid" as something new. 
-Understand "aid [something]" as aiding. 
-aiding is an action applying to a thing. 
+Understand the command "aid" as something new.
+Aiding is an action applying to one thing.
 
-Carry out aiding: 
-	if a person-like (called px) is aidable: 
-		say "You aid the person with their problem.";
-		Now the px is aided; 
-After aiding: 
-	Say "They appreciate your aid.";
+Before aiding when the noun is aidable and the noun is stressed:
+	say "This person doesn't want to talk to you.";
+	rule fails.
+
+Before aiding when the noun is aidable and the noun is aided:
+	say "You've already helped this person.";
+	rule fails.
+
+Carry out aiding:
+	Now the noun is aided;
+	say "You help them to the best of your ability.";
+	remove the noun from play.
+
+Understand "aid [something]" as aiding.
+
+[Asking]
+Understand the command "ask" as something new.
+Asking is an action applying to one thing.
+
+Before asking when the noun is askable and the noun is asked:
+	say "You've already bothered this person.";
+	Now the noun is stressed;
+	rule fails.
+
+Before asking when the noun is askable and the noun is stressed:
+	say "They are angry at you and walk away.";
+	rule fails.
+
+Carry out asking:
+	Now the noun is asked;
+	say "You try to understand their confusion and think you know what they need.".
+
+Understand "ask [something]" as asking.
 
 
-After examining a supporter which contains nothing:
-	say "The [noun] has nothing on it.".
+[Stamping forms]
+Understand the command  "stamp" as something new.
+Stamping is an action applying to one carried thing.
 
+Before stamping when the noun is stampable and the noun is expired:
+	say "This form is expired and worthless now.";
+	rule fails.
 
-Understand the command "stamp" as something new. 
-Understand "stamp [something]" as stamping. 
-stamping is an action applying to a thing. 
+Before stamping when the noun is stampable and the noun is not stampless:
+	say "You've already stamped this.";
+	rule fails.
 
-Carry out stamping: 
-	if a waybill (called tx) is not stamped: 
-		say "You stamp it.";
-		Now the tx is stamped; 
-After stamping: 
-	Say "It is now stamped.";
+Carry out stamping a carried waybill (called the waybill item):
+	Now the waybill item is stamped;
+	Now the waybill item is not stampless;
+	say "You stamp the [waybill item] using your official seal.".
+
+Understand "stamp [something]" as stamping.
 
 
 The r_0 and the r_3 and the r_2 and the r_1 are rooms.
@@ -279,8 +301,8 @@ The r_0 is mapped south of r_1.
 
 The f_0 and the f_1 and the f_2 are foods.
 The f_0 and the f_1 and the f_2 are privately-named.
-The fo_0 and the fo_1 and the fo_2 are waybills.
-The fo_0 and the fo_1 and the fo_2 are privately-named.
+The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 and the fo_7 and the fo_8 and the fo_9 are waybills.
+The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 and the fo_7 and the fo_8 and the fo_9 are privately-named.
 The pr_0 and the pr_1 and the pr_2 are person-likes.
 The pr_0 and the pr_1 and the pr_2 are privately-named.
 The r_0 and the r_3 and the r_2 and the r_1 are rooms.
@@ -292,30 +314,27 @@ Understand "coworker" as pr_0.
 The pr_0 can be aided.
 The pr_0 can be asked.
 The pr_0 is in r_0.
-The pr_0 is not aided.
 The description of pr_1 is "This is a customer waiting at the wrong window.".
 The printed name of pr_1 is "customer".
 Understand "customer" as pr_1.
 The pr_1 can be aided.
 The pr_1 can be asked.
 The pr_1 is in r_0.
-The pr_1 is not aided.
 The description of pr_2 is "This is a potential customer confused at a shelf.".
 The printed name of pr_2 is "shopper".
 Understand "shopper" as pr_2.
 The pr_2 can be aided.
 The pr_2 can be asked.
 The pr_2 is in r_1.
-The pr_2 is not aided.
 The description of f_0 is "That's a [noun]!".
 The printed name of f_0 is "berry".
 Understand "berry" as f_0.
 The f_0 is in r_3.
-The description of f_1 is "That's a [noun]!".
+The description of f_1 is "You couldn't pay me to eat that [noun].".
 The printed name of f_1 is "carrot".
 Understand "carrot" as f_1.
 The f_1 is in r_1.
-The description of f_2 is "You couldn't pay me to eat that [noun].".
+The description of f_2 is "That's a [noun]!".
 The printed name of f_2 is "apple".
 Understand "apple" as f_2.
 The f_2 is in r_2.
@@ -326,24 +345,90 @@ Understand "red receipt" as fo_0.
 Understand "red" as fo_0.
 Understand "receipt" as fo_0.
 The fo_0 is in r_3.
-The fo_0 is not stamped.
+The fo_0 is current.
 The fo_0 is stampable.
+The fo_0 is stampless.
 The description of fo_1 is "It's a form.".
 The printed name of fo_1 is "blue ticket".
 Understand "blue ticket" as fo_1.
 Understand "blue" as fo_1.
 Understand "ticket" as fo_1.
 The fo_1 is in r_1.
-The fo_1 is not stamped.
+The fo_1 is current.
 The fo_1 is stampable.
+The fo_1 is stampless.
 The description of fo_2 is "It's a form.".
 The printed name of fo_2 is "green formbill".
 Understand "green formbill" as fo_2.
 Understand "green" as fo_2.
 Understand "formbill" as fo_2.
 The fo_2 is in r_2.
-The fo_2 is not stamped.
+The fo_2 is current.
 The fo_2 is stampable.
+The fo_2 is stampless.
+The description of fo_3 is "It's a form.".
+The printed name of fo_3 is "yellow form".
+Understand "yellow form" as fo_3.
+Understand "yellow" as fo_3.
+Understand "form" as fo_3.
+The fo_3 is in r_3.
+The fo_3 is current.
+The fo_3 is stampable.
+The fo_3 is stampless.
+The description of fo_4 is "It's a form.".
+The printed name of fo_4 is "orange waybill".
+Understand "orange waybill" as fo_4.
+Understand "orange" as fo_4.
+Understand "waybill" as fo_4.
+The fo_4 is in r_2.
+The fo_4 is current.
+The fo_4 is stampable.
+The fo_4 is stampless.
+The description of fo_5 is "It's a long form.".
+The printed name of fo_5 is "purple waybill".
+Understand "purple waybill" as fo_5.
+Understand "purple" as fo_5.
+Understand "waybill" as fo_5.
+The fo_5 is in r_3.
+The fo_5 is current.
+The fo_5 is stampable.
+The fo_5 is stampless.
+The description of fo_6 is "It's a long form.".
+The printed name of fo_6 is "cyan waybill".
+Understand "cyan waybill" as fo_6.
+Understand "cyan" as fo_6.
+Understand "waybill" as fo_6.
+The fo_6 is in r_2.
+The fo_6 is current.
+The fo_6 is stampable.
+The fo_6 is stampless.
+The description of fo_7 is "It's a long form.".
+The printed name of fo_7 is "pink waybill".
+Understand "pink waybill" as fo_7.
+Understand "pink" as fo_7.
+Understand "waybill" as fo_7.
+The fo_7 is in r_0.
+The fo_7 is current.
+The fo_7 is stampable.
+The fo_7 is stampless.
+The description of fo_8 is "It's a long form.".
+The printed name of fo_8 is "white waybill".
+Understand "white waybill" as fo_8.
+Understand "white" as fo_8.
+Understand "waybill" as fo_8.
+The fo_8 is in r_3.
+The fo_8 is current.
+The fo_8 is stampable.
+The fo_8 is stampless.
+The description of fo_9 is "It's a long waybill.".
+The printed name of fo_9 is "black waybill".
+Understand "black waybill" as fo_9.
+Understand "black" as fo_9.
+Understand "waybill" as fo_9.
+The fo_9 is in r_0.
+The fo_9 is current.
+The fo_9 is stampable.
+The fo_9 is stampless.
 
 
 The player is in r_1.
@@ -351,46 +436,60 @@ The player is in r_1.
 The quest0 completed is a truth state that varies.
 The quest0 completed is usually false.
 
-Test quest0_0 with "take blue ticket / stamp blue ticket / take carrot"
+Test quest0_0 with ""
 
 Every turn:
 	if quest0 completed is true:
 		do nothing;
 	else if The pr_0 is aided:
 		end the story; [Lost]
-	else if The player is in r_1 and The player carries the f_1:
+	else if The fo_1 is stamped:
 		increase the score by 1; [Quest completed]
 		Now the quest0 completed is true;
 
 The quest1 completed is a truth state that varies.
 The quest1 completed is usually false.
 
-Test quest1_0 with "go south / go west / take berry"
+Test quest1_0 with ""
 
 Every turn:
 	if quest1 completed is true:
 		do nothing;
 	else if The pr_1 is aided:
 		end the story; [Lost]
-	else if The player is in r_3 and The player carries the f_0:
+	else if The fo_0 is stamped:
 		increase the score by 1; [Quest completed]
 		Now the quest1 completed is true;
 
 The quest2 completed is a truth state that varies.
 The quest2 completed is usually false.
 
-Test quest2_0 with "go south / go east / take apple"
+Test quest2_0 with ""
 
 Every turn:
 	if quest2 completed is true:
 		do nothing;
 	else if The pr_2 is aided:
 		end the story; [Lost]
-	else if The player is in r_2 and The player carries the f_2:
+	else if The fo_2 is stamped:
 		increase the score by 1; [Quest completed]
 		Now the quest2 completed is true;
 
-Use scoring. The maximum score is 3.
+The quest3 completed is a truth state that varies.
+The quest3 completed is usually false.
+
+Test quest3_0 with "take blue ticket / stamp blue ticket / go south / aid the coworker / go east / take green formbill / stamp green formbill / go west / go west / take red receipt / stamp red receipt"
+
+Every turn:
+	if quest3 completed is true:
+		do nothing;
+	else if The pr_2 is stressed and The pr_1 is stressed and The pr_0 is stressed:
+		end the story; [Lost]
+	else if The player carries the fo_0 and The fo_0 is stamped:
+		increase the score by 10; [Quest completed]
+		Now the quest3 completed is true;
+
+Use scoring. The maximum score is 13.
 This is the simpler notify score changes rule:
 	If the score is not the last notified score:
 		let V be the score - the last notified score;
@@ -557,9 +656,9 @@ The last property-aggregation rule (this is the print aggregated properties rule
 		rule succeeds;
 	rule fails;
 
-The objective part 0 is some text that varies. The objective part 0 is "Welcome to TextWorld! First off, if it's not too much trouble, I need you to pick-up the carrot from the floor of the lobby. And then, attempt to head south. After that, make an effort to head west. F".
-The objective part 1 is some text that varies. The objective part 1 is "ollowing that, lift the berry from the floor of the office. If you can get your hands on the berry, make an effort to move east. Then, attempt to go east. After that, pick-up the apple from the floor ".
-The objective part 2 is some text that varies. The objective part 2 is "of the storecloset. That's it!".
+The objective part 0 is some text that varies. The objective part 0 is "Hey, thanks for coming over to the TextWorld today, there is something I need you to do for me. Your first objective is to lift the blue ticket from the floor of the lobby. And then, stamp the blue ti".
+The objective part 1 is some text that varies. The objective part 1 is "cket. Then, head south. Then, aid the coworker. Then, go to the east. And then, pick up the green formbill from the floor of the storecloset. Then, stamp the green formbill. And then, try to take a tr".
+The objective part 2 is some text that varies. The objective part 2 is "ip west. With that done, travel west. Then, retrieve the red receipt from the floor of the office. If you can get your hands on the red receipt, stamp the red receipt. Got that? Good!".
 
 An objective is some text that varies. The objective is "[objective part 0][objective part 1][objective part 2]".
 Printing the objective is an action applying to nothing.

@@ -20,6 +20,8 @@ from glob import glob
 #tw-extract -v entities /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
+#.....   avg. steps:  73.7; avg. score:  2.7 / 3.
+#Trained in 282.13 secs
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -55,12 +57,12 @@ def play(agent, path, max_step=100, nb_episodes=100, verbose=True):
         done = False
         nb_moves = 0
         while not done:
-            command = agent.act(obs, score, done, infos)
+            command = agent.act(obs, score, done, nb_moves, infos)
             #print(command)
             obs, score, done, infos = env.step(command)
             nb_moves += 1
         
-        agent.act(obs, score, done, infos)  # Let the agent know the game is done.
+        agent.act(obs, score, done, nb_moves, infos)  # Let the agent know the game is done.
                 
         if verbose:
             print(".", end="")
@@ -142,7 +144,7 @@ class NeuralAgent:
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
         self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=256)
-        self.optimizer = optim.Adam(self.model.parameters(), 0.0003)
+        self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
         
         self.mode = "test"
     
@@ -203,7 +205,7 @@ class NeuralAgent:
             
         return returns[::-1], advantages[::-1]
 
-    def act(self, obs: str, score: int, done: bool, infos: Mapping[str, Any]) -> Optional[str]:
+    def act(self, obs: str, score: int, done: bool, moves: int, infos: Mapping[str, Any]) -> Optional[str]:
         
         # Build agent's observation: feedback + look + inventory.
         input_ = "{}\n{}\n{}".format(obs, infos["description"], infos["inventory"])
@@ -226,12 +228,17 @@ class NeuralAgent:
         self.no_train_step += 1
         
         if self.transitions:
-            reward = score - self.last_score  # Reward is the gain/loss in score.
+            reward = (score * 100 - self.last_score) - moves  # Reward is the gain/loss in score.
+            #reward = (score * 100) - moves
+            #print(reward)
             self.last_score = score
             if infos["won"]:
-                reward += 100
+                print('won')
+                reward += 1000
+                reward -= moves
             if infos["lost"]:
-                reward -= 100
+                reward -= 1000
+                reward -= moves
                 
             self.transitions[-1][0] = reward  # Update reward information.
         
@@ -291,7 +298,7 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", nb_episodes=500, verbose=True)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", nb_episodes=2500, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.

@@ -1,13 +1,14 @@
 # person
 type pr : o {
     predicates {
-        not_asked(pr);
+        notasked(pr);
+        aidable(pr);
         askable(pr);
         asked(pr);
         attacked(pr);
         stressed(pr);
-        not_aided(pr);
-        not_stressed(pr);
+        notaided(pr);
+        notstressed(pr);
         aided(pr);
     }
 
@@ -16,27 +17,22 @@ type pr : o {
         aid :: $at(P, r) & $at(pr,r) & aidable(pr) -> aided(pr);
     }
 
-    constraints {
-        pr1 :: asked(pr) & not_asked(pr) -> fail();
-        pr2 :: aided(pr) & not_aided(pr) -> fail();
-    }
-
     inform7 {
         type {
             kind :: "person-like";
-            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided. person-like are usually not aided. person-like is fixed in place.";
+            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided.";
         }
 
         predicates {
             attacked(pr)  :: "The {pr} is attacked";
             aided(pr) :: "The {pr} is aided";
             asked(pr) :: "The {pr} is asked";
-            not_asked(pr) :: "The {pr} is not asked";
+            notasked(pr) :: "The {pr} is not asked";
             askable(pr) :: "The {pr} can be asked";
             aidable(pr) :: "The {pr} can be aided";
             stressed(pr) :: "The {pr} is stressed";
-            not_stressed(pr) :: "The {pr} is not stressed";
-            not_aided(pr) :: "The {pr} is not aided";
+            notstressed(pr) :: "The {pr} is not stressed";
+            notaided(pr) :: "The {pr} is not aided";
         }
 
         commands {
@@ -45,29 +41,43 @@ type pr : o {
         }
 
         code :: """
-            [Asking]
-            Understand the command "ask" as something new. 
-            Understand "ask [something]" as asking. 
-            asking is an action applying to a thing. 
-
-            Carry out asking: 
-                if a person-like (called tx) is askable: 
-                    say "The person is trying to get something done but is having a hard time...";
-                    Now the tx is asked;
-            After asking: 
-                Say "[the noun] they could use your aid.";
-
             [Aiding]
-            Understand the command "aid" as something new. 
-            Understand "aid [something]" as aiding. 
-            aiding is an action applying to a thing. 
+            Understand the command "aid" as something new.
+            Aiding is an action applying to one thing.
 
-            Carry out aiding: 
-                if a person-like (called px) is aidable: 
-                    say "You aid the person with their problem.";
-                    Now the px is aided; 
-            After aiding: 
-                Say "They appreciate your aid.";
+            Before aiding when the noun is aidable and the noun is stressed:
+                say "This person doesn't want to talk to you.";
+                rule fails.
+
+            Before aiding when the noun is aidable and the noun is aided:
+                say "You've already helped this person.";
+                rule fails.
+
+            Carry out aiding:
+                Now the noun is aided;
+                say "You help them to the best of your ability.";
+                remove the noun from play.
+
+            Understand "aid [something]" as aiding.
+
+            [Asking]
+            Understand the command "ask" as something new.
+            Asking is an action applying to one thing.
+
+            Before asking when the noun is askable and the noun is asked:
+                say "You've already bothered this person.";
+                Now the noun is stressed;
+                rule fails.
+
+            Before asking when the noun is askable and the noun is stressed:
+                say "They are angry at you and walk away.";
+                rule fails.
+
+            Carry out asking:
+                Now the noun is asked;
+                say "You try to understand their confusion and think you know what they need.".
+
+            Understand "ask [something]" as asking.
         """;
     }
 }

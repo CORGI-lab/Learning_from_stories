@@ -1,12 +1,12 @@
 import textworld
 from textworld import GameMaker
 from textworld.generator.data import KnowledgeBase
-from textworld.generator.game import Event, Quest
+from textworld.generator.game import Event, Quest, Proposition
 from textworld.generator.game import GameOptions
 
 # Make the generation process reproducible.
 from textworld import g_rng  # Global random generator.
-g_rng.set_seed(20180916)
+#g_rng.set_seed(20180916)
 
 from textworld.generator import compile_game
 import io
@@ -183,26 +183,26 @@ def build_and_compile_papersplease():
 	#counter.add(supporter2)
 	#office.add(supporter)
 
-	form1 = M.new(type="fo", name = 'red receipt') 
-	form1.infos.desc = "It's a waybill."
-	form2 = M.new(type="fo", name = 'blue ticket') 
-	form2.infos.desc = "It's a form."
-	form3 = M.new(type="fo", name = 'green formbill') 
-	form3.infos.desc = "It's a form."
-	#form4 = M.new(type="fo", name = 'yellow form') 
-	#form4.infos.desc = "It's a form."
-	# form5 = M.new(type="fo", name = 'orange waybill') 
-	# form5.infos.desc = "It's a form."
-	# form6 = M.new(type="fo", name = 'purple waybill') 
-	# form6.infos.desc = "It's a long form."
-	# form7 = M.new(type="fo", name = 'cyan waybill') 
-	# form7.infos.desc = "It's a long form."
-	# form8 = M.new(type="fo", name = 'pink waybill') 
-	# form8.infos.desc = "It's a long form."
-	# form9 = M.new(type="fo", name = 'white waybill') 
-	# form9.infos.desc = "It's a long form."
-	# form10 = M.new(type="fo", name = 'black waybill') 
-	# form10.infos.desc = "It's a long waybill."
+	formred = M.new(type="fo", name = 'red receipt') 
+	formred.infos.desc = "It's a waybill."
+	formblue = M.new(type="fo", name = 'blue ticket') 
+	formblue.infos.desc = "It's a form."
+	formgreen = M.new(type="fo", name = 'green formbill') 
+	formgreen.infos.desc = "It's a form."
+	form4 = M.new(type="fo", name = 'yellow form') 
+	form4.infos.desc = "It's a form."
+	form5 = M.new(type="fo", name = 'orange waybill') 
+	form5.infos.desc = "It's a form."
+	form6 = M.new(type="fo", name = 'purple waybill') 
+	form6.infos.desc = "It's a long form."
+	form7 = M.new(type="fo", name = 'cyan waybill') 
+	form7.infos.desc = "It's a long form."
+	form8 = M.new(type="fo", name = 'pink waybill') 
+	form8.infos.desc = "It's a long form."
+	form9 = M.new(type="fo", name = 'white waybill') 
+	form9.infos.desc = "It's a long form."
+	form10 = M.new(type="fo", name = 'black waybill') 
+	form10.infos.desc = "It's a long waybill."
 	#stove = M.new(type="oven", name = "oven")
 	#stove.infos.desc = "this is an oven. you can cook your food"
 	#supporter.add(food)  # When added directly to a room, portable objects are put on the floor.
@@ -210,15 +210,15 @@ def build_and_compile_papersplease():
 	#alley.add(stove)
 	cw = M.new(type="pr", name = "coworker")
 	cw.infos.desc = "This person is your coworker. They look stressed."
-	M.add_fact("not_aided", cw)
+	#M.add_fact("notaided", cw)
 
 	person = M.new(type="pr", name = "customer")
 	person.infos.desc = "This is a customer waiting at the wrong window."
-	M.add_fact("not_aided", person)
+	#M.add_fact("notaided", person)
 
 	person2 = M.new(type="pr", name = "shopper")
 	person2.infos.desc = "This is a potential customer confused at a shelf."
-	M.add_fact("not_aided", person2)
+	#M.add_fact("notaided", person2)
 	# chair1 = M.new(type='s', name = "chair")  # When not provided, names are automatically generated.
 	# #office.add(supporter)  # Supporters are fixed in place.
 	# chair1.infos.desc = "It is a wooden chair."
@@ -232,22 +232,63 @@ def build_and_compile_papersplease():
 	#counter.add(chair1)
 	#counter.add(chair2)
 
+	M.add_fact("askable",cw)
+	M.add_fact("askable",person)
+	M.add_fact("askable",person2)
+
+	M.add_fact("aidable",cw)
+	M.add_fact("aidable",person)
+	M.add_fact("aidable",person2)
+
+	M.add_fact("stampable",formred)
+	M.add_fact("stampable",formblue)
+	M.add_fact("stampable",formgreen)
+	M.add_fact("stampable",form4)
+	M.add_fact("stampable",form5)
+	M.add_fact("stampable",form6)
+	M.add_fact("stampable",form7)
+	M.add_fact("stampable",form8)
+	M.add_fact("stampable",form9)
+	M.add_fact("stampable",form10)
+
+	M.add_fact("stampless",formred)
+	M.add_fact("stampless",formblue)
+	M.add_fact("stampless",formgreen)
+	M.add_fact("stampless",form4)
+	M.add_fact("stampless",form5)
+	M.add_fact("stampless",form6)
+	M.add_fact("stampless",form7)
+	M.add_fact("stampless",form8)
+	M.add_fact("stampless",form9)
+	M.add_fact("stampless",form10)
+
+	M.add_fact("current",formred)
+	M.add_fact("current",formblue)
+	M.add_fact("current",formgreen)
+	M.add_fact("current",form4)
+	M.add_fact("current",form5)
+	M.add_fact("current",form6)
+	M.add_fact("current",form7)
+	M.add_fact("current",form8)
+	M.add_fact("current",form9)
+	M.add_fact("current",form10)
+
 	lobby.add(person2)
 
 	counter.add(cw)
 	counter.add(person)
 
-	office.add(form1)
-	lobby.add(form2)
-	storage.add(form3)
-	#office.add(form4)
-	#office.add(form5)
+	office.add(formred)
+	lobby.add(formblue)
+	storage.add(formgreen)
+	office.add(form4)
+	storage.add(form5)
 
-	#office.add(form6)
-	#office.add(form7)
-	#office.add(form8)
-	#office.add(form9)
-	#office.add(form10)
+	office.add(form6)
+	storage.add(form7)
+	counter.add(form8)
+	office.add(form9)
+	counter.add(form10)
 
 	# supporter2.add(form1)
 	# supporter2.add(form2)
@@ -271,44 +312,15 @@ def build_and_compile_papersplease():
 	#supporter.add(food2)
 	M.add_fact("raw",food2)
 
-	M.add_fact("not_stamped",form1)
-	M.add_fact("not_stamped",form2)
-	M.add_fact("not_stamped",form3)
-	#M.add_fact("not_stamped",form4)
-	# M.add_fact("not_stamped",form5)
-	# M.add_fact("not_stamped",form6)
-	# M.add_fact("not_stamped",form7)
-	# M.add_fact("not_stamped",form8)
-	# M.add_fact("not_stamped",form9)
-	# M.add_fact("not_stamped",form10)
-	M.add_fact("askable",cw)
-	M.add_fact("askable",person)
-	M.add_fact("askable",person2)
-
-	M.add_fact("aidable",cw)
-	M.add_fact("aidable",person)
-	M.add_fact("aidable",person2)
-
-	M.add_fact("stampable",form1)
-	M.add_fact("stampable",form2)
-	M.add_fact("stampable",form3)
-	#M.add_fact("stampable",form4)
-	# M.add_fact("stampable",form5)
-	# M.add_fact("stampable",form6)
-	# M.add_fact("stampable",form7)
-	# M.add_fact("stampable",form8)
-	# M.add_fact("stampable",form9)
-	# M.add_fact("stampable",form10)
-	#counter.add(supporter2)
-	#office.add(supporter)
 
 	#quest4a_cmds = ["go south", "go west", "take yellow ticket",  "stamp yellow ticket"]
 	#q4a = M.new_event_using_commands(quest4a_cmds)
-	quest1_cmds = ["take blue ticket","stamp blue ticket","take carrot" ]
+	quest1_cmds = ["take blue ticket","stamp blue ticket"]
 
-	q1= M.new_event_using_commands(quest1_cmds)
+	#q1= M.new_event_using_commands(quest1_cmds)
+	q1 = Event(conditions={M.new_fact("stamped", formblue)})
 	f1 = Event(conditions={M.new_fact("aided", cw)})
-	#quest1_fail = ["go south", "aid coworker"]
+	
 	#f1 = M.new_event_using_commands(quest1_fail)
 
 	quest1 = Quest(win_events=[q1],
@@ -317,9 +329,9 @@ def build_and_compile_papersplease():
 	
 	M.quests.append(quest1)
 
-	quest2_cmds = ["go south", "go west", "stamp red receipt", "take berry"]
-	q2 = M.new_event_using_commands(quest2_cmds)
-
+	quest2_cmds = ["go south", "go west", "stamp red receipt"]
+	#q2 = M.new_event_using_commands(quest2_cmds)
+	q2 = Event(conditions={M.new_fact("stamped", formred)})
 	f2 = Event(conditions={M.new_fact("aided", person)})
 
 	#quest2_fail = ["aid shopper"]
@@ -331,10 +343,11 @@ def build_and_compile_papersplease():
 
 	M.quests.append(quest2)
 
-	quest3_cmds = ["go south", "go east",  "stamp green formbill", "take apple"]
-	q3 = M.new_event_using_commands(quest3_cmds)
+	quest3_cmds = ["go south", "go east", "stamp green formbill"]
+	#q3 = M.new_event_using_commands(quest3_cmds)
+	q3 = Event(conditions={M.new_fact("stamped", formgreen)})
 
-	quest3_fail = ["go south", "aid customer"]
+	#quest3_fail = ["go south", "aid customer"]
 	#f3 = M.new_event_using_commands(quest3_fail)
 	f3 = Event(conditions={M.new_fact("aided", person2)})
 
@@ -343,6 +356,29 @@ def build_and_compile_papersplease():
 				   reward=1)
 
 	M.quests.append(quest3)
+	quest4_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid coworker","go east", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt"]
+	#quest4a_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid coworker","go east", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt"]
+	q4 = M.new_event_using_commands(quest4_cmds)
+	#quest4a_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid customer", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt", "go east", "go north"]
+	#q4a = M.new_event_using_commands(quest4a_cmds)
+	#quest4a_cmds = ["aid shopper"]
+	#q4a = M.new_event_using_commands(quest4a_cmds)
+	#quest4_fail = ["ask shopper","ask shopper", "go south", "ask coworker","ask coworker","ask customer","ask customer"]
+	#f4 = M.new_event_using_commands(quest4_fail)
+	#print(M.state.facts)
+	#for x in M.facts:
+	#	print(x)
+	f4 = Event(conditions={M.new_fact("stressed",person2),M.new_fact("stressed",person),M.new_fact("stressed",cw)})
+	#f4 = Event(conditions={Proposition("h1",(person2,M.State.properties("aided")))})
+	#f4 = M.new_event_using_commands(quest4_fail)
+	#q4 = Event(conditions={M.new_fact("stamped", formred),M.new_fact("stamped", formblue),M.new_fact("stamped", formgreen)})
+	#f4 = Event(conditions={M.new_fact("expired",formred),M.new_fact("expired",formblue),M.new_fact("expired",formgreen)})
+
+	quest4 = Quest(win_events=[q4],
+				   fail_events=[f4],
+				   reward=10)
+
+	M.quests.append(quest4)
 
 	#quest4_cmds = ["go south", "go west", "take yellow waybill",  "stamp yellow waybill"]
 	#q4 = M.new_event_using_commands(quest4_cmds)
@@ -392,10 +428,10 @@ def build_and_compile_papersplease():
 	# 			   fail_events=[f3,f2,f1],
 	# 			   reward=1)
 
-	#M.quests = [quest1]
+	M.quests = [quest1, quest2, quest3, quest4]
 	
 	game = M.build()
-	#game.main_quest = quest1
+	game.main_quest = M.quests[3]
 	game_file = _compile_test_game(game)
 	return game, game_file
 	

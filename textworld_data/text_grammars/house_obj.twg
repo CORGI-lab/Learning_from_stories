@@ -243,11 +243,11 @@ berry:straw;blue;rasp;black;elder;boysen;lingon;huckle;logan;cran;goji;goose
 
 
 (fo):#(fo)_adj# | #(fo)_noun#
-(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;
+(fo)_adj:red;blue;yellow;green;purple;orange;black;white;pink;cyan;stamped;stampable;stampless;expired;current
 (fo)_noun:waybill;form;receipt;list;ticket;formbill
 
 (pr):#(pr)_adj# | #(pr)_noun#
-(pr)_adj:confused,angry,stressed,upset,happy
+(pr)_adj:confused,angry;stressed;upset;happy;askable;aidable;asked;aided
 (pr)_noun:person;customer;coworker;man;woman;shopper
 
 

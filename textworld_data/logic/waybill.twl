@@ -4,28 +4,26 @@ type fo : o {
         stampable(fo);
         stamped(fo);
         stampless(fo);
-        not_stamped(fo);
+        expired(fo);
+        current(fo);
     }
 
     rules {
-        stamp :: in(fo, I) & not_stamped(fo) -> stamped(fo);
-    }
-
-    constraints {
-        fo1 :: stamped(fo) & not_stamped(fo) -> fail();
+        stamp :: $in(fo, I) & stampless(fo) & current(fo) -> stamped(fo);
     }
 
     inform7 {
         type {
             kind :: "waybill";
-            definition :: "waybills can be stamped. waybills can be stampable. waybills are portable. waybills can be seen. waybills can be examined. waybills can be on something. waybills are usually not stamped. waybills can be stampless.";
+            definition :: "waybills can be stamped. waybills can be stampable. waybills can be expired. waybills can be current. waybills are portable. waybills can be seen. waybills can be examined. waybills can be on something. waybills can be stampless.";
         }
 
         predicates {
             stampable(fo) :: "The {fo} is stampable";
             stamped(fo) :: "The {fo} is stamped";
             stampless(fo) :: "The {fo} is stampless";
-            not_stamped(fo) :: "The {fo} is not stamped";
+            current(fo) :: "The {fo} is current";
+            expired(fo) :: "The {fo} is expired";
         }
 
         commands {
@@ -33,16 +31,24 @@ type fo : o {
         }
 
         code :: """
-            Understand the command "stamp" as something new. 
-            Understand "stamp [something]" as stamping. 
-            stamping is an action applying to a thing. 
+            [Stamping forms]
+            Understand the command  "stamp" as something new.
+            Stamping is an action applying to one carried thing.
 
-            Carry out stamping: 
-                if a waybill (called tx) is not stamped: 
-                    say "You stamp it.";
-                    Now the tx is stamped; 
-            After stamping: 
-                Say "It is now stamped.";
+            Before stamping when the noun is stampable and the noun is expired:
+                say "This form is expired and worthless now.";
+                rule fails.
+
+            Before stamping when the noun is stampable and the noun is not stampless:
+                say "You've already stamped this.";
+                rule fails.
+
+            Carry out stamping a carried waybill (called the waybill item):
+                Now the waybill item is stamped;
+                Now the waybill item is not stampless;
+                say "You stamp the [waybill item] using your official seal.".
+
+            Understand "stamp [something]" as stamping.
         """;
     }
 }
