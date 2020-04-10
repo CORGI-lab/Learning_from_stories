@@ -299,20 +299,17 @@ class NeuralAgent:
                             BERT_reward = BERT_pos_reward
 
 
-            reward = (score * 100 - self.last_score * 100) - moves + int(BERT_reward)  # Reward is the gain/loss in score.
+            reward = ((self.last_score - score) * 100) - moves + int(BERT_reward)  # Reward is the gain/loss in score.
+            
             #A2C-base, mixed binary, mixed diff, pos only, neg only
             #reward = (score * 100) - moves
             #print(reward)
-            self.last_score = score * 100
+            self.last_score = score
             if infos["won"]:
                 print('won')
-                reward += 10000
-                reward -= moves
-                reward += int(BERT_reward)
+                reward += 1000
             if infos["lost"]:
-                reward -= 10000
-                reward -= moves
-                reward += int(BERT_reward)
+                reward -= 1000
                 
             self.transitions[-1][0] = reward  # Update reward information.
         
