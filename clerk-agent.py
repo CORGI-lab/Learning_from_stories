@@ -157,8 +157,8 @@ class CommandScorer(torch.nn.Module):
 
 class NeuralAgent:
     """ Simple Neural Agent for playing TextWorld games. """
-    MAX_VOCAB_SIZE = 150
-    UPDATE_FREQUENCY = 5
+    MAX_VOCAB_SIZE = 300
+    UPDATE_FREQUENCY = 10
     LOG_FREQUENCY = 1000
     GAMMA = 0.9
     
@@ -168,7 +168,7 @@ class NeuralAgent:
         self.id2word = ["<PAD>", "<UNK>"]
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
-        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=64)
+        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=256)
         self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
         
         self.mode = "test"
@@ -315,7 +315,7 @@ class NeuralAgent:
                     self.stats["mean"]["confidence"].append(torch.exp(log_action_probs).item())
                     #episode,reward,policy,value,entropy,confidence,score,vocabsize
                     if self.no_train_step % 1000 == 0:
-                        writer.writerow([self.no_train_step,reward,policy_loss.item(),value_loss.item(),entropy.item(),torch.exp(log_action_probs).item(),score,len(self.id2word)])
+                        writer.writerow([self.no_train_step,reward,policy_loss.item(),value_loss.item(),entropy.item(),torch.exp(log_action_probs).item(),score,len(self.id2word),moves])
                 if self.no_train_step % self.LOG_FREQUENCY == 0:
                     msg = "{}. ".format(self.no_train_step)
                     msg += "  ".join("{}: {:.3f}".format(k, np.mean(v)) for k, v in self.stats["mean"].items())
