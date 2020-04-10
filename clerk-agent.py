@@ -56,7 +56,9 @@ modelmode = "a2c"
 #mode = "gg-neg"
 #mode = "gg-pos"
 
-current_loss = 0
+current_vloss = 0
+current_ploss = 0
+current_entropy = 0
 current_confidence = 0
 total_gg_pos = 0
 total_gg_neg = 0
@@ -99,7 +101,7 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2
                 nb_moves += 1
             no_episode
             agent.act(agentType,obs, score, done, nb_moves, infos)  # Let the agent know the game is done.
-            writer2.writerow([agentType,no_episode,nb_moves,score,current_loss,current_confidence,total_gg_pos,total_gg_neg])        
+            writer2.writerow([agentType,no_episode,nb_moves,score,current_ploss,current_vloss,current_confidence,current_entropy,total_gg_pos,total_gg_neg])        
             #if verbose:
             #    print(".", end="")
             avg_moves.append(nb_moves)
@@ -244,7 +246,9 @@ class NeuralAgent:
         return returns[::-1], advantages[::-1]
 
     def act(self, agentType: str, obs: str, score: int, done: bool, moves: int, infos: Mapping[str, Any]) -> Optional[str]:
-        global current_loss
+        global current_ploss
+        global current_vloss
+        global current_entropy
         global current_confidence
         global total_gg_pos
         global total_gg_neg
@@ -334,7 +338,9 @@ class NeuralAgent:
                     entropy     = (-probs * log_probs).sum()
                     loss += policy_loss + 0.5 * value_loss.long() - 0.1 * entropy
                     
-                    current_loss = loss
+                    current_ploss = policy_loss.item()
+                    current_vloss = value_loss.item()
+                    current_entropy = entropy.item()
                     current_confidence = torch.exp(log_action_probs).item()
                     self.stats["mean"]["reward"].append(reward)
                     self.stats["mean"]["policy"].append(policy_loss.item())
