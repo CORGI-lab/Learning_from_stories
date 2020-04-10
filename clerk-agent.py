@@ -51,9 +51,18 @@ ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=N
 
 #print(torch.cuda.is_available(), device)
 
+modelmode = "a2c"
+#mode = "gg-mix"
+#mode = "gg-neg"
+#mode = "gg-pos"
+
+current_loss = 0
+current_confidence = 0
+total_gg_pos = 0
+total_gg_neg = 0
 #
 
-def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
+def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2c"):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
     
@@ -74,28 +83,32 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
         
     # Collect some statistics: nb_steps, final reward.
     avg_moves, avg_scores, avg_norm_scores = [], [], []
-    for no_episode in range(nb_episodes):
-        obs, infos = env.reset()  # Start new episode.
+    with open('gg-lfs-analysis.csv', 'a', newline='') as file:
+        writer2 = csv.writer(file)
+        for no_episode in range(nb_episodes):
+            obs, infos = env.reset()  # Start new episode.
 
-        score = 0
-        done = False
-        nb_moves = 0
-        while not done:
-            command = agent.act(obs, score, done, nb_moves, infos)
-            #print(command)
-            obs, score, done, infos = env.step(command)
-            nb_moves += 1
-        
-        agent.act(obs, score, done, nb_moves, infos)  # Let the agent know the game is done.
-                
-        if verbose:
-            print(".", end="")
-        avg_moves.append(nb_moves)
-        avg_scores.append(score)
-        avg_norm_scores.append(score / infos["max_score"])
+            score = 0
+            done = False
+            nb_moves = 0
+            while not done:
+                command = agent.act(agentType, obs, score, done, nb_moves, infos)
+                #print(command)
+                obs, score, done, infos = env.step(command)
+
+                nb_moves += 1
+            no_episode
+            agent.act(agentType,obs, score, done, nb_moves, infos)  # Let the agent know the game is done.
+            writer2.writerow([agentType,no_episode,nb_moves,score,current_loss,current_confidence,total_gg_pos,total_gg_neg])        
+            #if verbose:
+            #    print(".", end="")
+            avg_moves.append(nb_moves)
+            avg_scores.append(score)
+            avg_norm_scores.append(score / infos["max_score"])
 
     env.close()
-    msg = "  \tavg. steps: {:5.1f}; avg. score: {:4.1f} / {}."
+    msg = agentType+"  \tavg. steps: {:5.1f}; avg. score: {:4.1f} / {}."
+    print(msg)
     if verbose:
         if os.path.isdir(path):
             print(msg.format(np.mean(avg_moves), np.mean(avg_norm_scores), 1))
@@ -230,7 +243,11 @@ class NeuralAgent:
             
         return returns[::-1], advantages[::-1]
 
-    def act(self, obs: str, score: int, done: bool, moves: int, infos: Mapping[str, Any]) -> Optional[str]:
+    def act(self, agentType: str, obs: str, score: int, done: bool, moves: int, infos: Mapping[str, Any]) -> Optional[str]:
+        global current_loss
+        global current_confidence
+        global total_gg_pos
+        global total_gg_neg
         #device = torch.device("cpu")
         #torch.cuda.set_device(0)
         # Build agent's observation: feedback + look + inventory.
@@ -256,31 +273,40 @@ class NeuralAgent:
         
         if self.transitions:
             BERT_reward = 0
-            with torch.no_grad(): #SJF: KEY FOR SAVING MEMORY DURING INFERENCE
-                ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
-                glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-                goutputs = ggmodel(ginput_ids, labels=glabels)
-                gloss, glogits = goutputs[:2]
-                #print("BERT TEST OUT: {},{}".format(loss,logits))
-                classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-                #print(GGCLASSES[classification_index])
-                
-                if GGCLASSES[classification_index] == 'negative':
-                    BERT_reward = glogits[0][0] * -100
-                else:
-                    BERT_reward = glogits[0][1] * 100
-            reward = (score * 100 - self.last_score) - moves + int(BERT_reward)  # Reward is the gain/loss in score.
+            if agentType != "a2c":
+                with torch.no_grad(): #SJF: KEY FOR SAVING MEMORY DURING INFERENCE
+                    ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                    glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
+                    goutputs = ggmodel(ginput_ids, labels=glabels)
+                    gloss, glogits = goutputs[:2]
+                    #print("BERT TEST OUT: {},{}".format(loss,logits))
+                    classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
+                    #print(GGCLASSES[classification_index])
+                    
+                    if GGCLASSES[classification_index] == 'negative':
+                        BERT_neg_reward = glogits[0][0] * -10
+                        total_gg_neg = total_gg_neg + glogits[0][0] * -1
+                        if agentType == "gg-mix" or agentType == "gg-neg":
+                            BERT_reward = BERT_neg_reward
+                    else:
+                        BERT_pos_reward = glogits[0][1] * 10
+                        total_gg_pos = total_gg_pos + glogits[0][0] * -1
+                        if agentType == "gg-mix" or agentType == "gg-pos":
+                            BERT_reward = BERT_pos_reward
+
+
+            reward = (score * 100 - self.last_score * 100) - moves + int(BERT_reward)  # Reward is the gain/loss in score.
             #A2C-base, mixed binary, mixed diff, pos only, neg only
             #reward = (score * 100) - moves
             #print(reward)
-            self.last_score = score
+            self.last_score = score * 100
             if infos["won"]:
                 print('won')
-                reward += 1000
+                reward += 10000
                 reward -= moves
                 reward += int(BERT_reward)
             if infos["lost"]:
-                reward -= 1000
+                reward -= 10000
                 reward -= moves
                 reward += int(BERT_reward)
                 
@@ -291,7 +317,7 @@ class NeuralAgent:
             # Update model
             returns, advantages = self._discount_rewards(values)
             #A2C-base, mixed binary, mixed diff, pos only, neg only
-            with open('gg-confidence-mix-binary-a2c.csv', 'a', newline='') as file:
+            with open('oldstats.csv', 'a', newline='') as file:
                 writer = csv.writer(file)
                 lx = 0.0000001
                 loss = 0
@@ -308,14 +334,16 @@ class NeuralAgent:
                     entropy     = (-probs * log_probs).sum()
                     loss += policy_loss + 0.5 * value_loss.long() - 0.1 * entropy
                     
+                    current_loss = loss
+                    current_confidence = torch.exp(log_action_probs).item()
                     self.stats["mean"]["reward"].append(reward)
                     self.stats["mean"]["policy"].append(policy_loss.item())
                     self.stats["mean"]["value"].append(value_loss.item())
                     self.stats["mean"]["entropy"].append(entropy.item())
                     self.stats["mean"]["confidence"].append(torch.exp(log_action_probs).item())
                     #episode,reward,policy,value,entropy,confidence,score,vocabsize
-                    if self.no_train_step % 1000 == 0:
-                        writer.writerow([self.no_train_step,reward,policy_loss.item(),value_loss.item(),entropy.item(),torch.exp(log_action_probs).item(),score,len(self.id2word),moves])
+                    #if self.no_train_step % 1000 == 0:
+                        #writer.writerow([self.no_train_step,reward,policy_loss.item(),value_loss.item(),entropy.item(),torch.exp(log_action_probs).item(),score,len(self.id2word),moves])
                 if self.no_train_step % self.LOG_FREQUENCY == 0:
                     msg = "{}. ".format(self.no_train_step)
                     msg += "  ".join("{}: {:.3f}".format(k, np.mean(v)) for k, v in self.stats["mean"].items())
@@ -340,17 +368,19 @@ class NeuralAgent:
         
         return action
 
-agent = NeuralAgent()
+#agent = NeuralAgent()
+modzlist = ["a2c","gg-mix","gg-pos","gg-neg"]
 
-from time import time
-agent = NeuralAgent()
+for modz in modzlist:
+    from time import time
+    agent = NeuralAgent()
 
-print("Training")
-agent.train()  # Tell the agent it should update its parameters.
-starttime = time()
-play(agent, "tw_games/cg.ulx", max_step=150, nb_episodes=50000, verbose=True)  # Dense rewards game.
-print("Trained in {:.2f} secs".format(time() - starttime))
-agent.test()
+    print("Training")
+    agent.train()  # Tell the agent it should update its parameters.
+    starttime = time()
+    play(agent, "tw_games/cg.ulx", max_step=200, nb_episodes=20000, verbose=True, agentType=modz)  # Dense rewards game.
+    print("Trained in {:.2f} secs".format(time() - starttime))
+    agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.
 #play(agent, "tw_games/cg.ulx")
 # Register a text-based game as a new Gym's environment.
