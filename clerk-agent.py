@@ -348,7 +348,7 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", max_step=100, nb_episodes=10000, verbose=True)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", max_step=150, nb_episodes=50000, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.
