@@ -7,7 +7,6 @@ from textworld import EnvInfos
 
 from transformers import BertTokenizer, BertConfig, BertForSequenceClassification
 
-import torch
 import re
 from typing import List, Mapping, Any, Optional
 from collections import defaultdict
@@ -21,24 +20,21 @@ import os
 from glob import glob
 import csv
 
-import torch as t
 #tw-extract -v entities /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-extract -v vocab /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #tw-play /mnt/c/users/spenc/desktop/lfs/tw_games/cg.ulx
 #.....   avg. steps:  73.7; avg. score:  2.7 / 3.
 #Trained in 282.13 secs
 # 
-t.device("cuda:0" )
 torch.manual_seed(22)
-torch.device("cpu")
-t.manual_seed(22)
-t.cuda.set_device(0)
-state_dict = t.load('./models/pytorch_model.bin')
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+#state_dict = t.load('./models/pytorch_model.bin')
 #ggmodel.load_state_dict(state_dict)
 tokenizer = BertTokenizer('./models/vocab.txt', do_lower_case=True)
 
 GGCLASSES = ['negative','positive']
-ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=None, from_tf=False, state_dict=state_dict).to("cuda:0")
+ggmodel = BertForSequenceClassification.from_pretrained('./models/', cache_dir=None, from_tf=False, state_dict=None).to("cuda:0")
 
 #config = BertConfig.from_json_file('./models/gg.json')
 #ggmodel = BertForSequenceClassification('./models/gg.bin')
@@ -109,60 +105,60 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True):
 class CommandScorer(torch.nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CommandScorer, self).__init__()
-        device = torch.device("cpu")
+        #device = torch.device("cpu")
         #torch.manual_seed(42)  # For reproducibility
         #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         #print(torch.cuda.is_available())
         #print(device)
-        self.embedding    = torch.nn.Embedding(input_size, hidden_size).to("cpu")
-        self.encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).to("cpu")
-        self.cmd_encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).to("cpu")
-        self.state_gru    = torch.nn.GRU(hidden_size, hidden_size).to("cpu")
+        self.embedding    = torch.nn.Embedding(input_size, hidden_size).to(device)
+        self.encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).to(device)
+        self.cmd_encoder_gru  = torch.nn.GRU(hidden_size, hidden_size).to(device)
+        self.state_gru    = torch.nn.GRU(hidden_size, hidden_size).to(device)
         self.hidden_size  = hidden_size
-        self.state_hidden = torch.zeros(1, 1, hidden_size).to("cpu")
-        self.critic       = torch.nn.Linear(hidden_size, 1).to("cpu")
-        self.att_cmd      = torch.nn.Linear(hidden_size * 2, 1).to("cpu")
+        self.state_hidden = torch.zeros(1, 1, hidden_size).to(device)
+        self.critic       = torch.nn.Linear(hidden_size, 1).to(device)
+        self.att_cmd      = torch.nn.Linear(hidden_size * 2, 1).to(device)
 
     def forward(self, obs, commands, **kwargs):
         input_length = obs.size(0)
         batch_size = obs.size(1)
         nb_cmds = commands.size(1)
 
-        embedded = self.embedding(obs).to("cpu")
+        embedded = self.embedding(obs).to(device)
         encoder_output, encoder_hidden = self.encoder_gru(embedded)
-        encoder_hidden.to("cpu")
-        state_output, state_hidden = self.state_gru(encoder_hidden, self.state_hidden.to("cpu"))
+        encoder_hidden.to(device)
+        state_output, state_hidden = self.state_gru(encoder_hidden, self.state_hidden.to(device))
         self.state_hidden = state_hidden
-        value = self.critic(state_output).to("cpu")
+        value = self.critic(state_output).to(device)
 
         # Attention network over the commands.
-        cmds_embedding = self.embedding.forward(commands).to("cpu")
+        cmds_embedding = self.embedding.forward(commands).to(device)
         _, cmds_encoding_last_states = self.cmd_encoder_gru.forward(cmds_embedding) # 1 x cmds x hidden
 
         # Same observed state for all commands.
-        cmd_selector_input = torch.stack([state_hidden] * nb_cmds, 2).to("cpu")  # 1 x batch x cmds x hidden
+        cmd_selector_input = torch.stack([state_hidden] * nb_cmds, 2).to(device)  # 1 x batch x cmds x hidden
 
         # Same command choices for the whole batch.
-        cmds_encoding_last_states = torch.stack([cmds_encoding_last_states] * batch_size, 1).to("cpu")  # 1 x batch x cmds x hidden
+        cmds_encoding_last_states = torch.stack([cmds_encoding_last_states] * batch_size, 1).to(device)  # 1 x batch x cmds x hidden
 
         # Concatenate the observed state and command encodings.
-        cmd_selector_input = torch.cat([cmd_selector_input, cmds_encoding_last_states], dim=-1).to("cpu")
+        cmd_selector_input = torch.cat([cmd_selector_input, cmds_encoding_last_states], dim=-1).to(device)
 
         # Compute one score per command.
-        scores = torch.nn.functional.relu(self.att_cmd(cmd_selector_input)).squeeze(-1).to("cpu")  # 1 x Batch x cmds
+        scores = torch.nn.functional.relu(self.att_cmd(cmd_selector_input)).squeeze(-1).to(device)  # 1 x Batch x cmds
 
-        probs = torch.nn.functional.softmax(scores, dim=2).to("cpu")  # 1 x Batch x cmds
-        index = probs[0].multinomial(num_samples=1).unsqueeze(0).to("cpu") # 1 x batch x indx
+        probs = torch.nn.functional.softmax(scores, dim=2).to(device)  # 1 x Batch x cmds
+        index = probs[0].multinomial(num_samples=1).unsqueeze(0).to(device) # 1 x batch x indx
         return scores, index, value
 
     def reset_hidden(self, batch_size):
-        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size).to("cpu")
+        self.state_hidden = torch.zeros(1, batch_size, self.hidden_size).to(device)
 
 
 class NeuralAgent:
     """ Simple Neural Agent for playing TextWorld games. """
     MAX_VOCAB_SIZE = 150
-    UPDATE_FREQUENCY = 10
+    UPDATE_FREQUENCY = 5
     LOG_FREQUENCY = 1000
     GAMMA = 0.9
     
@@ -172,7 +168,7 @@ class NeuralAgent:
         self.id2word = ["<PAD>", "<UNK>"]
         self.word2id = {w: i for i, w in enumerate(self.id2word)}
         
-        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=128)
+        self.model = CommandScorer(input_size=self.MAX_VOCAB_SIZE, hidden_size=64)
         self.optimizer = optim.Adam(self.model.parameters(), 0.00003)
         
         self.mode = "test"
@@ -218,8 +214,8 @@ class NeuralAgent:
         for i, text in enumerate(texts):
             padded[i, :len(text)] = text
 
-        padded_tensor = torch.from_numpy(padded).type(torch.long).to("cpu")
-        padded_tensor = padded_tensor.permute(1, 0).to("cpu") # Batch x Seq => Seq x Batch
+        padded_tensor = torch.from_numpy(padded).type(torch.long).to(device)
+        padded_tensor = padded_tensor.permute(1, 0).to(device) # Batch x Seq => Seq x Batch
         return padded_tensor
       
     def _discount_rewards(self, last_values):
@@ -238,8 +234,8 @@ class NeuralAgent:
         #device = torch.device("cpu")
         #torch.cuda.set_device(0)
         # Build agent's observation: feedback + look + inventory.
-        #input_ = "{}\n{}\n{}".format(obs, infos["description"], infos["inventory"])
         input_ = "{}\n{}".format(obs, infos["description"])
+        #input_ = "{}\n{}".format(obs, infos["description"])
         #print(infos["admissible_commands"])
         # Tokenize and pad the input and the commands to chose from.
         input_tensor = self._process([input_])
@@ -249,18 +245,7 @@ class NeuralAgent:
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
         #print(action)
-        ginput_ids = t.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0) # Batch size 1
-        glabels = t.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-        goutputs = ggmodel(ginput_ids, labels=glabels)
-        gloss, glogits = goutputs[:2]
-        #print("BERT TEST OUT: {},{}".format(loss,logits))
-        classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-        #print(GGCLASSES[classification_index])
-        BERT_reward = 0
-        if GGCLASSES[classification_index] == 'negative':
-            BERT_reward = glogits[0][0] * -100
-        else:
-            BERT_reward = glogits[0][1] * 100
+        
 
         if self.mode == "test":
             if done:
@@ -270,7 +255,21 @@ class NeuralAgent:
         self.no_train_step += 1
         
         if self.transitions:
-            reward = (score * 100 - self.last_score) - moves + BERT_reward  # Reward is the gain/loss in score.
+            BERT_reward = 0
+            with torch.no_grad(): #SJF: KEY FOR SAVING MEMORY DURING INFERENCE
+                ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+',so he '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
+                goutputs = ggmodel(ginput_ids, labels=glabels)
+                gloss, glogits = goutputs[:2]
+                #print("BERT TEST OUT: {},{}".format(loss,logits))
+                classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
+                #print(GGCLASSES[classification_index])
+                
+                if GGCLASSES[classification_index] == 'negative':
+                    BERT_reward = glogits[0][0] * -100
+                else:
+                    BERT_reward = glogits[0][1] * 100
+            reward = (score * 100 - self.last_score) - moves + int(BERT_reward)  # Reward is the gain/loss in score.
             #A2C-base, mixed binary, mixed diff, pos only, neg only
             #reward = (score * 100) - moves
             #print(reward)
@@ -279,11 +278,11 @@ class NeuralAgent:
                 print('won')
                 reward += 1000
                 reward -= moves
-                reward += BERT_reward
+                reward += int(BERT_reward)
             if infos["lost"]:
                 reward -= 1000
                 reward -= moves
-                reward += BERT_reward
+                reward += int(BERT_reward)
                 
             self.transitions[-1][0] = reward  # Update reward information.
         
@@ -295,7 +294,7 @@ class NeuralAgent:
             with open('gg-confidence-mix-binary-a2c.csv', 'a', newline='') as file:
                 writer = csv.writer(file)
                 lx = 0.0000001
-                loss = Variable(torch.tensor(lx), requires_grad = False).to("cpu")
+                loss = 0
                 #oss = 0
                 for transition, ret, advantage in zip(self.transitions, returns, advantages):
                     reward, indexes_, outputs_, values_ = transition
@@ -349,7 +348,7 @@ agent = NeuralAgent()
 print("Training")
 agent.train()  # Tell the agent it should update its parameters.
 starttime = time()
-play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=50000, verbose=True)  # Dense rewards game.
+play(agent, "tw_games/cg.ulx", max_step=100, nb_episodes=10000, verbose=True)  # Dense rewards game.
 print("Trained in {:.2f} secs".format(time() - starttime))
 agent.test()
 #play(agent, "tw_games/cg.ulx")  # Dense rewards game.
