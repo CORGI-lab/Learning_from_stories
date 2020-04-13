@@ -286,9 +286,9 @@ def build_and_compile_papersplease():
 
 	office.add(form6)
 	storage.add(form7)
-	counter.add(form8)
-	office.add(form9)
-	counter.add(form10)
+	# counter.add(form8)
+	# office.add(form9)
+	# counter.add(form10)
 
 	# supporter2.add(form1)
 	# supporter2.add(form2)
@@ -315,33 +315,33 @@ def build_and_compile_papersplease():
 
 	#quest4a_cmds = ["go south", "go west", "take yellow ticket",  "stamp yellow ticket"]
 	#q4a = M.new_event_using_commands(quest4a_cmds)
-	quest1_cmds = ["take blue ticket","stamp blue ticket"]
+	# quest1_cmds = ["take blue ticket","stamp blue ticket"]
 
-	#q1= M.new_event_using_commands(quest1_cmds)
-	q1 = Event(conditions={M.new_fact("stamped", formblue)})
-	f1 = Event(conditions={M.new_fact("aided", cw)})
+	# #q1= M.new_event_using_commands(quest1_cmds)
+	# q1 = Event(conditions={M.new_fact("stamped", formblue)})
+	# f1 = Event(conditions={M.new_fact("aided", cw)})
 	
-	#f1 = M.new_event_using_commands(quest1_fail)
+	# #f1 = M.new_event_using_commands(quest1_fail)
 
-	quest1 = Quest(win_events=[q1],
-				   fail_events=[f1],
-				   reward=1)
+	# quest1 = Quest(win_events=[q1],
+	# 			   fail_events=[f1],
+	# 			   reward=1)
 	
-	M.quests.append(quest1)
+	# M.quests.append(quest1)
 
-	quest2_cmds = ["go south", "go west", "stamp red receipt"]
-	#q2 = M.new_event_using_commands(quest2_cmds)
-	q2 = Event(conditions={M.new_fact("stamped", formred)})
-	f2 = Event(conditions={M.new_fact("aided", person)})
+	# quest2_cmds = ["go south", "go west", "stamp red receipt"]
+	# #q2 = M.new_event_using_commands(quest2_cmds)
+	# q2 = Event(conditions={M.new_fact("stamped", formred)})
+	# f2 = Event(conditions={M.new_fact("aided", person)})
 
-	#quest2_fail = ["aid shopper"]
-	#f2 = M.new_event_using_commands(quest2_fail)
+	# #quest2_fail = ["aid shopper"]
+	# #f2 = M.new_event_using_commands(quest2_fail)
 
-	quest2 = Quest(win_events=[q2],
-				   fail_events=[f2],
-				   reward=1)
+	# quest2 = Quest(win_events=[q2],
+	# 			   fail_events=[f2],
+	# 			   reward=1)
 
-	M.quests.append(quest2)
+	# M.quests.append(quest2)
 
 	quest3_cmds = ["go south", "go east", "stamp green formbill"]
 	#q3 = M.new_event_using_commands(quest3_cmds)
@@ -353,10 +353,10 @@ def build_and_compile_papersplease():
 
 	quest3 = Quest(win_events=[q3],
 				   fail_events=[f3],
-				   reward=1)
+				   reward=5)
 
 	M.quests.append(quest3)
-	quest4_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid coworker","go east", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt"]
+	quest4_cmds = ["take blue ticket", "stamp blue ticket", "go south", "go east", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt"]
 	#quest4a_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid coworker","go east", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt"]
 	q4 = M.new_event_using_commands(quest4_cmds)
 	#quest4a_cmds = ["take blue ticket", "stamp blue ticket", "go south", "aid customer", "take green formbill", "stamp green formbill", "go west", "go west", "take red receipt", "stamp red receipt", "go east", "go north"]
@@ -428,10 +428,10 @@ def build_and_compile_papersplease():
 	# 			   fail_events=[f3,f2,f1],
 	# 			   reward=1)
 
-	M.quests = [quest1, quest2, quest3, quest4]
+	M.quests = [quest3, quest4]
 	
 	game = M.build()
-	game.main_quest = M.quests[3]
+	game.main_quest = quest4
 	game_file = _compile_test_game(game)
 	return game, game_file
 	

@@ -301,8 +301,8 @@ The r_0 is mapped south of r_1.
 
 The f_0 and the f_1 and the f_2 are foods.
 The f_0 and the f_1 and the f_2 are privately-named.
-The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 and the fo_7 and the fo_8 and the fo_9 are waybills.
-The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 and the fo_7 and the fo_8 and the fo_9 are privately-named.
+The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 are waybills.
+The fo_0 and the fo_1 and the fo_2 and the fo_3 and the fo_4 and the fo_5 and the fo_6 are privately-named.
 The pr_0 and the pr_1 and the pr_2 are person-likes.
 The pr_0 and the pr_1 and the pr_2 are privately-named.
 The r_0 and the r_3 and the r_2 and the r_1 are rooms.
@@ -330,7 +330,7 @@ The description of f_0 is "That's a [noun]!".
 The printed name of f_0 is "berry".
 Understand "berry" as f_0.
 The f_0 is in r_3.
-The description of f_1 is "You couldn't pay me to eat that [noun].".
+The description of f_1 is "The [noun] looks appealing.".
 The printed name of f_1 is "carrot".
 Understand "carrot" as f_1.
 The f_1 is in r_1.
@@ -402,33 +402,6 @@ The fo_6 is in r_2.
 The fo_6 is current.
 The fo_6 is stampable.
 The fo_6 is stampless.
-The description of fo_7 is "It's a long form.".
-The printed name of fo_7 is "pink waybill".
-Understand "pink waybill" as fo_7.
-Understand "pink" as fo_7.
-Understand "waybill" as fo_7.
-The fo_7 is in r_0.
-The fo_7 is current.
-The fo_7 is stampable.
-The fo_7 is stampless.
-The description of fo_8 is "It's a long form.".
-The printed name of fo_8 is "white waybill".
-Understand "white waybill" as fo_8.
-Understand "white" as fo_8.
-Understand "waybill" as fo_8.
-The fo_8 is in r_3.
-The fo_8 is current.
-The fo_8 is stampable.
-The fo_8 is stampless.
-The description of fo_9 is "It's a long waybill.".
-The printed name of fo_9 is "black waybill".
-Understand "black waybill" as fo_9.
-Understand "black" as fo_9.
-Understand "waybill" as fo_9.
-The fo_9 is in r_0.
-The fo_9 is current.
-The fo_9 is stampable.
-The fo_9 is stampless.
 
 
 The player is in r_1.
@@ -441,55 +414,27 @@ Test quest0_0 with ""
 Every turn:
 	if quest0 completed is true:
 		do nothing;
-	else if The pr_0 is aided:
+	else if The pr_2 is aided:
 		end the story; [Lost]
-	else if The fo_1 is stamped:
-		increase the score by 1; [Quest completed]
+	else if The fo_2 is stamped:
+		increase the score by 5; [Quest completed]
 		Now the quest0 completed is true;
 
 The quest1 completed is a truth state that varies.
 The quest1 completed is usually false.
 
-Test quest1_0 with ""
+Test quest1_0 with "take blue ticket / stamp blue ticket / go south / go east / take green formbill / stamp green formbill"
 
 Every turn:
 	if quest1 completed is true:
 		do nothing;
-	else if The pr_1 is aided:
+	else if The pr_0 is stressed and The pr_1 is stressed and The pr_2 is stressed:
 		end the story; [Lost]
-	else if The fo_0 is stamped:
-		increase the score by 1; [Quest completed]
+	else if The player carries the fo_2 and The fo_2 is stamped:
+		increase the score by 10; [Quest completed]
 		Now the quest1 completed is true;
 
-The quest2 completed is a truth state that varies.
-The quest2 completed is usually false.
-
-Test quest2_0 with ""
-
-Every turn:
-	if quest2 completed is true:
-		do nothing;
-	else if The pr_2 is aided:
-		end the story; [Lost]
-	else if The fo_2 is stamped:
-		increase the score by 1; [Quest completed]
-		Now the quest2 completed is true;
-
-The quest3 completed is a truth state that varies.
-The quest3 completed is usually false.
-
-Test quest3_0 with "take blue ticket / stamp blue ticket / go south / aid the coworker / go east / take green formbill / stamp green formbill / go west / go west / take red receipt / stamp red receipt"
-
-Every turn:
-	if quest3 completed is true:
-		do nothing;
-	else if The pr_2 is stressed and The pr_1 is stressed and The pr_0 is stressed:
-		end the story; [Lost]
-	else if The player carries the fo_0 and The fo_0 is stamped:
-		increase the score by 10; [Quest completed]
-		Now the quest3 completed is true;
-
-Use scoring. The maximum score is 13.
+Use scoring. The maximum score is 15.
 This is the simpler notify score changes rule:
 	If the score is not the last notified score:
 		let V be the score - the last notified score;
@@ -656,9 +601,9 @@ The last property-aggregation rule (this is the print aggregated properties rule
 		rule succeeds;
 	rule fails;
 
-The objective part 0 is some text that varies. The objective part 0 is "Hey, thanks for coming over to the TextWorld today, there is something I need you to do for me. Your first objective is to lift the blue ticket from the floor of the lobby. And then, stamp the blue ti".
-The objective part 1 is some text that varies. The objective part 1 is "cket. Then, head south. Then, aid the coworker. Then, go to the east. And then, pick up the green formbill from the floor of the storecloset. Then, stamp the green formbill. And then, try to take a tr".
-The objective part 2 is some text that varies. The objective part 2 is "ip west. With that done, travel west. Then, retrieve the red receipt from the floor of the office. If you can get your hands on the red receipt, stamp the red receipt. Got that? Good!".
+The objective part 0 is some text that varies. The objective part 0 is "Who's got a virtual machine and is about to play through an fast paced round of TextWorld? You do! Here is your task for today. First of all, pick-up the blue ticket from the floor of the lobby. With ".
+The objective part 1 is some text that varies. The objective part 1 is "the blue ticket, stamp the blue ticket. After that, move south. And then, make an attempt to venture east. Then, pick-up the green formbill from the floor of the storecloset. And then, stamp the green".
+The objective part 2 is some text that varies. The objective part 2 is " formbill. And once you've done that, you win!".
 
 An objective is some text that varies. The objective is "[objective part 0][objective part 1][objective part 2]".
 Printing the objective is an action applying to nothing.
