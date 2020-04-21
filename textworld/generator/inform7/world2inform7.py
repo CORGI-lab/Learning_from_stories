@@ -362,8 +362,8 @@ class Inform7Game:
 
         print(maximum_score)
         # Enable scoring is at least one quest has nonzero reward.
-        #if maximum_score != 0: #SJF EDIT
-        source += "Use scoring. The maximum score is {}.\n".format(maximum_score)
+        if maximum_score != 0:
+            source += "Use scoring. The maximum score is {}.\n".format(maximum_score)
 
         # Build test condition for winning the game.
         game_winning_test = "1 is 0 [always false]"

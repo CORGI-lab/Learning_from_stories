@@ -315,16 +315,22 @@ def build_and_compile_papersplease():
 
 	#quest4a_cmds = ["go south", "go west", "take yellow ticket",  "stamp yellow ticket"]
 	#q4a = M.new_event_using_commands(quest4a_cmds)
-	# quest1_cmds = ["take blue ticket","stamp blue ticket"]
+	quest0_cmds = ["take carrot"]
 
-	# #q1= M.new_event_using_commands(quest1_cmds)
+	q0= M.new_event_using_commands(quest0_cmds)
+	quest0 = Quest(win_events=[q0],
+				   fail_events=[],
+				   reward=1)
+	
+	M.quests.append(quest0)
+
 	q1 = Event(conditions={M.new_fact("stamped", formblue)})
 	f1 = Event(conditions={M.new_fact("aided", cw)})
 	
 	# #f1 = M.new_event_using_commands(quest1_fail)
 
 	quest1 = Quest(win_events=[q1],
-				   fail_events=[f1],
+				   fail_events=[],
 				   reward=2)
 	
 	M.quests.append(quest1)
@@ -338,7 +344,7 @@ def build_and_compile_papersplease():
 	# #f2 = M.new_event_using_commands(quest2_fail)
 
 	quest2 = Quest(win_events=[q2],
-	 			   fail_events=[f2],
+	 			   fail_events=[],
 	 			   reward=2)
 
 	M.quests.append(quest2)
@@ -352,10 +358,49 @@ def build_and_compile_papersplease():
 	f3 = Event(conditions={M.new_fact("aided", person2)})
 
 	quest3 = Quest(win_events=[q3],
-				   fail_events=[f3],
+				   fail_events=[],
 				   reward=2)
 
 	M.quests.append(quest3)
+
+	q1 = Event(conditions={M.new_fact("stamped", formblue)})
+	f1 = Event(conditions={M.new_fact("aided", cw)})
+	
+	# #f1 = M.new_event_using_commands(quest1_fail)
+
+	quest1a = Quest(win_events=[f1],
+				   fail_events=[],
+				   reward=-1)
+	
+	M.quests.append(quest1a)
+
+	# quest2_cmds = ["go south", "go west", "stamp red receipt"]
+	# #q2 = M.new_event_using_commands(quest2_cmds)
+	q2 = Event(conditions={M.new_fact("stamped", formred)})
+	f2 = Event(conditions={M.new_fact("aided", person)})
+
+	# #quest2_fail = ["aid shopper"]
+	# #f2 = M.new_event_using_commands(quest2_fail)
+
+	quest2a = Quest(win_events=[f2],
+	 			   fail_events=[],
+	 			   reward=-1)
+
+	M.quests.append(quest2a)
+
+	#quest3_cmds = ["go south", "go east", "stamp green formbill"]
+	#q3 = M.new_event_using_commands(quest3_cmds)
+	q3 = Event(conditions={M.new_fact("stamped", formgreen)})
+
+	#quest3_fail = ["go south", "aid customer"]
+	#f3 = M.new_event_using_commands(quest3_fail)
+	f3 = Event(conditions={M.new_fact("aided", person2)})
+
+	quest3a = Quest(win_events=[f3],
+				   fail_events=[],
+				   reward=-1)
+
+	M.quests.append(quest3a)
 
 	q4 = Event(conditions={M.new_fact("stamped", form4)})
 	f4 = Event(conditions={M.new_fact("asked", cw)})
@@ -364,7 +409,7 @@ def build_and_compile_papersplease():
 
 	quest4 = Quest(win_events=[f4],
 				   fail_events=[],
-				   reward=-2)
+				   reward=-1)
 	
 	M.quests.append(quest4)
 
@@ -378,7 +423,7 @@ def build_and_compile_papersplease():
 
 	quest5 = Quest(win_events=[f5],
 	 			   fail_events=[],
-	 			   reward=-2)
+	 			   reward=-1)
 
 	M.quests.append(quest5)
 
@@ -392,7 +437,7 @@ def build_and_compile_papersplease():
 
 	quest6 = Quest(win_events=[f6],
 				   fail_events=[],
-				   reward=-2)
+				   reward=-1)
 
 	M.quests.append(quest6)
 
