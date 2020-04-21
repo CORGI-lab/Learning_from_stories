@@ -677,14 +677,20 @@ class GameMaker:
         self.build()
         return self.quests[-1]
 
-    def new_fact(self, name: str, *entities: List["WorldEntity"]) -> None:
+    def new_fact(self, name: str, entities: List["WorldEntity"]) -> None:
         """ Create new fact.
 
         Args:
             name: The name of the new fact.
             *entities: A list of entities as arguments to the new fact.
         """
-        args = [entity.var for entity in entities]
+        args = []
+        if isinstance(entities, WorldEntity):
+            args = [entities.var]
+        else:
+            for e in entities:
+                args.append(e.var)
+        #args = [entity.var for entity in entities]
         return Proposition(name, args)
 
     def new_event_using_commands(self, commands: List[str]) -> Event:

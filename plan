@@ -1,0 +1,26 @@
+Data/Plan for GG:
+
+Very simple "clerk world" ... 3 people that could be helped, 3 forms to stamp. Stamp, ask, aid. A2C solves this readily. How does this model behave when a 3rd party audit
+model is added to assess normativity?
+
+Description + Pronoun + Action
+DPA is analyzed by normative classifier, integrated with the A2C model in various ways
+
+#a2c chooses an action, bert scores the choice a) if its positive add positive, b) if its negative add negative c) add both
+#gg-ps multiplies the logits from the gg model with the probabilities for each admissible action
+
+0 -> 1 for A2C probability multiplied by 1 -> -1 for GG logits
+-Sensitivity to scaling that influence (1.0, 0.5, 0.1)
+
+Sum of BERT logits across all moves added to loss function
+
+-Approaches
+-Max score
+-Ranges across all runs (5 per colossal adventure)
+-Pronouns
+-Alter the words used for aiding
+-Experiment descriptor -> Action templates on Qualtrics
+
+-Compare to a cluttered version
+-Run on all Jericho games
+-Solution length

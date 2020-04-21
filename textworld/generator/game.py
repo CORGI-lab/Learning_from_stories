@@ -221,7 +221,7 @@ class Quest:
 
         # Unless explicitly provided, reward is set to 1 if there is at least
         # one winning events otherwise it is set to 0.
-        self.reward = int(len(win_events) > 0) if reward is None else reward
+        self.reward = int(len(win_events) != 0) if reward is None else reward
 
         if len(self.win_events) == 0 and len(self.fail_events) == 0:
             raise UnderspecifiedQuestError()
