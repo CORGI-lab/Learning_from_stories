@@ -67,7 +67,11 @@ bert_agreement = []
 bert_loss = 0
 bertrews = []
 baserews = []
-descpairs = {}
+
+lobbyDesc = "There is a form you need to stamp in your mailbox. There is a customer on the floor. There are some donuts on the table. There is a clerk window and an employee door to your south."
+counterDesc = "There are doors to the office and storage room. There is a form you need to stamp on a table. Your coworker looks stressed and there is a customer who looks angry."
+officeDesc = "This is a store room. There are many objects on the floor. There is a stack of papers that need to be stamped on the shelf. There is a door to your east."
+storageDesc = "This is an office. There is an important form on the desk. There is food on the desk. There is a door to the east."
 #
 
 def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2c", runNumber=0, pronoun="He"):
@@ -278,10 +282,25 @@ class NeuralAgent:
         global bertrews
         global baserews
         global descpairs
+
+        global officeDesc
+        global lobbyDesc
+        global counterDesc
+        global storageDesc
         #device = torch.device("cpu")
         #torch.cuda.set_device(0)
         # Build agent's observation: feedback + look + inventory.
-        input_ = "{}\n{}".format(obs, infos["description"])
+        desc = infos["description"]
+
+        if "office" in infos["description"]:
+            desc = officeDesc
+        if "storage" in infos["description"]:
+            desc = storageDesc
+        if "lobby" in infos["description"]:
+            desc = lobbyDesc
+        if "counter" in infos["description"]:
+            desc = counterDesc
+        input_ = "{}\n{}".format(obs, desc)
         #input_ = "{}\n{}".format(obs, infos["description"])
         #print(infos["admissible_commands"])
         # Tokenize and pad the input and the commands to chose from.
@@ -321,7 +340,7 @@ class NeuralAgent:
             if "gg-ps" in agentType:
                 for idx, val in enumerate(outputs[0][0]):
                     with torch.no_grad():
-                        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                        ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
                         glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
                         goutputs = ggmodel(ginput_ids, labels=glabels)
                         gloss, glogits = goutputs[:2]
@@ -349,7 +368,7 @@ class NeuralAgent:
 
             if agentType != "a2c" and agentType != "gg-loss" and ("gg-ps" not in agentType):
                 with torch.no_grad(): 
-                    ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. '+pronoun+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                    ginput_ids = torch.tensor(tokenizer.encode(desc'. '+pronoun+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
                     glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
                     goutputs = ggmodel(ginput_ids, labels=glabels)
                     gloss, glogits = goutputs[:2]
@@ -457,16 +476,16 @@ class NeuralAgent:
 modzlist = ["a2c","gg-mix","gg-mix-multi","gg-pos","gg-neg","gg-loss","gg-ps1.0","gg-ps0.5","gg-ps0.1"] #policy shaping across all values, gg output as a scalar positive or negative, base a2c
 pronouns = ["He", "She", "They"]
 
+p = "He"
 
-for p in pronouns:
-    for a in range(5):
-        for modz in modzlist:
-            from time import time
-            agent = NeuralAgent()
+for a in range(5):
+    for modz in modzlist:
+        from time import time
+        agent = NeuralAgent()
 
-            print("Training {} with pronoun {} run {}".format(modz,p,a))
-            agent.train()  # Tell the agent it should update its parameters.
-            starttime = time()
-            play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=2000, verbose=True, agentType=modz, runNumber=a, pronoun=p)  # Dense rewards game.
-            print("Trained in {:.2f} secs".format(time() - starttime))
-            agent.test()
+        print("Training {} with pronoun {} run {}".format(modz,p,a))
+        agent.train()  # Tell the agent it should update its parameters.
+        starttime = time()
+        play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=1000, verbose=True, agentType=modz, runNumber=a, pronoun=p)  # Dense rewards game.
+        print("Trained in {:.2f} secs".format(time() - starttime))
+        agent.test()
