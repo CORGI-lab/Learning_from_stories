@@ -76,57 +76,7 @@ def _compile_test_game(game):
 	return game_file
 
 
-# def build_and_compile_no_quest_game(options: GameOptions):
-# 	M = textworld.GameMaker()
-
-# 	#M = GameMaker()
-# 	roomA = M.new_room("Room A")
-# 	alley = M.new_room("Alley")
-# 	bank1 = M.new_room("Bank1")
-# 	bank2 = M.new_room("Bank2")
-# 	bank3 = M.new_room("Bank3")
-# 	corridor = M.connect(roomA.east, alley.west)
-# 	corridor1 = M.connect(alley.east, bank1.west)
-# 	corridor1 = M.connect(alley.north, bank2.south)
-# 	corridor1 = M.connect(alley.south, bank3.north)
-# 	M.set_player(roomA)
-# 	#M.render()
-
-# 	roomA.infos.desc = "You are in a road. Some mobs are planning to rob a bank. You need to stop them. Go east to the alley. You can find a person in the alley who has information about the roberry. Collect information from him and prevent the roberry."
-# 	alley.infos.desc = "There is a person beside the table in the alley. You can find an oven here as well."
-# 	supporter = M.new(type='s', name = "table")  # When not provided, names are automatically generated.
-# 	alley.add(supporter)  # Supporters are fixed in place.
-# 	supporter.infos.desc = "It is a metal sturdy table. There are some food on the table"
-# 	food = M.new(type="f", name = 'carrot') 
-# 	food.infos.desc = "It's carrot"
-# 	stove = M.new(type="oven", name = "oven")
-# 	stove.infos.desc = "this is an oven. you can cook your food"
-# 	supporter.add(food)  # When added directly to a room, portable objects are put on the floor.
-# 	#supporter.add(stove)
-# 	alley.add(stove)
-# 	person = M.new(type="pr", name = "informant")
-# 	person.infos.desc = "This person knows about the bank roberry. Do a favor for him. He will help you."
-# 	M.add_fact("not_asked", person)
-# 	alley.add(person)
-# 	M.add_fact("raw",food)
-# 	# room = M.new_room()
-# 	# M.set_player(room)
-# 	# item = M.new(type="o")
-# 	# room.add(item)
-# 	# game = M.build()
-
-# 	game_file = _compile_test_game(game, options)
-# 	return game, game_file
-
-#Outside: A lady has dropped her groceries
-#Lobby: A man looks confused as he is staring at the different types of letters. A long line has formed and your coworker looks stressed. A customer looks frustrated in front of an empty rack of doodads.
-#Counter: The area behind the counter is messy.
-
 def build_and_compile_papersplease():
-
-	# one room
-	# person comes in, description
-	# sits down, slams the table ... reject people who are violent, lying, giving bribes
 
 	M = GameMaker()
 
@@ -141,28 +91,6 @@ def build_and_compile_papersplease():
 	c3 = M.connect(counter.east, storage.west)
 	c4 = M.connect(counter.west, office.east)
 
-	# door1 = M.new_door(c1, name="glass door")
-	# door2 = M.new_door(c2, name="iron door")
-	# door3 = M.new_door(c3, name="maple door")
-	# door4 = M.new_door(c4, name="pine door")
-
-	# outside.add(door1)
-	# lobby.add(door2)
-	# counter.add(door3)
-	# counter.add(door4)
-
-	# M.add_fact("locked", door2)
-	# key = M.new(type="k", name="iron key")  # Create a 'k' (i.e. key) object. 
-	# M.add_fact("match", key, door2)
-	# M.inventory.add(key)
-
-	
-	#obj = M.new(type='t', name="cell phone")  # New portable object with a randomly generated name.
-	#obj.infos.desc = "This is your cellphone. There is a missed call from your partner and many texts from your brother."
-
-	#M.inventory.add(obj)  # Add the object to the player's inventory.
-	#M.render()
-	#outside.infos.desc = "You are now outside your office. There is a door."
 	counter.infos.desc = "You are now behind your counter."
 	lobby.infos.desc = "This is the clerk office lobby."
 	office.infos.desc = "This is your office. There's not much here aside from a desk with your work on it."
@@ -180,8 +108,8 @@ def build_and_compile_papersplease():
 	#doodad = M.new(type="o", name = 'doodad') 
 	#doodad.infos.desc = "It's a strange looking item. Who could need one of these? You know they are normally placed on a display out front."
 	
-	#counter.add(supporter2)
-	#office.add(supporter)
+	counter.add(supporter2)
+	office.add(supporter)
 
 	formred = M.new(type="fo", name = 'red receipt') 
 	formred.infos.desc = "It's a waybill."
@@ -305,7 +233,7 @@ def build_and_compile_papersplease():
 	office.add(food5)
 	#food4 = M.new(type="t", name = 'paper') 
 	#outside.add(food4)
-	food3 = M.new(type="f", name = 'carrot') 
+	food3 = M.new(type="f", name = 'donut box') 
 	lobby.add(food3)
 	food2 = M.new(type="f", name = 'apple') 
 	storage.add(food2)

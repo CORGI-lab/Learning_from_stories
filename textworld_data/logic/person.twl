@@ -20,7 +20,7 @@ type pr : o {
     inform7 {
         type {
             kind :: "person-like";
-            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided.";
+            definition ::  "person-like can be asked. person-like can be askable. person-like can be aidable. person-like can be seen. person-like can be examined. person-like can be stressed. person-like can be aided. person-like cannot be taken. person-like cannot be dropped.";
         }
 
         predicates {

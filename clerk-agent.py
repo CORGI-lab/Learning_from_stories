@@ -67,6 +67,7 @@ bert_agreement = []
 bert_loss = 0
 bertrews = []
 baserews = []
+descpairs = {}
 #
 
 def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2c", runNumber=0, pronoun="He"):
@@ -92,6 +93,7 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2
     avg_moves, avg_scores, avg_norm_scores = [], [], []
     with open('bigger-analysis-uncluttered-4-21.csv', 'a', newline='\n') as file:
         writer2 = csv.writer(file)
+        writer2.writerow(['runNumber','agentType','no_episode','nb_moves','win','pronoun','current_reward','current_ploss','current_vloss','current_confidence','current_entropy','total_gg_pos','total_gg_neg','avg_bert_reward','avg_base_reward'])  
         for no_episode in range(nb_episodes):
             obs, infos = env.reset()  # Start new episode.
             bert_agreement = []
@@ -118,7 +120,6 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2
                     oa = sum(baserews)/len(baserews)
                 print("avg rew: {}".format(oa))
             agent.act(agentType,obs, score, done, nb_moves, pronoun, infos)  # Let the agent know the game is done.
-            writer2.writerow(['runNumber','agentType','no_episode','nb_moves','win','pronoun','current_reward','current_ploss','current_vloss','current_confidence','current_entropy','total_gg_pos','total_gg_neg','avg_bert_reward','avg_base_reward'])  
             writer2.writerow([runNumber,agentType,no_episode,nb_moves,win,pronoun,current_reward,current_ploss,current_vloss,current_confidence,current_entropy,total_gg_pos,total_gg_neg,ba,oa])        
             if verbose:
                 print(".", end="")
@@ -276,6 +277,7 @@ class NeuralAgent:
         global bert_loss
         global bertrews
         global baserews
+        global descpairs
         #device = torch.device("cpu")
         #torch.cuda.set_device(0)
         # Build agent's observation: feedback + look + inventory.
@@ -285,7 +287,10 @@ class NeuralAgent:
         # Tokenize and pad the input and the commands to chose from.
         input_tensor = self._process([input_])
         commands_tensor = self._process(infos["admissible_commands"])
-        
+
+        #SJF OUTPUTTING STATE/ACTION PAIRS: DESCRIPTION AS KEY, ADMISSABLE AS VALUE IN DICT, RUN AGENT FOR A FEW MINUTES
+        #SJF: for each, format a string and add to a file
+
         # Get our next action and value prediction.
         outputs, indexes, values = self.model(input_tensor, commands_tensor)
         action = infos["admissible_commands"][indexes[0]]
@@ -300,45 +305,7 @@ class NeuralAgent:
         #sum_of_values = []
         max_value = -9999
         max_value_index = -1
-        #pos_values_per_command = []
-        #neg_values_per_command = []
-        # ginput_ids = []
-        # for idx, val in enumerate(outputs[0][0]):
-        #     ginput_ids.append(tokenizer.encode(infos["description"]+'. He '+infos["admissible_commands"][idx], add_special_tokens=True))
-        # if agentType == "gg-ps":
-        #     with torch.no_grad():
-        #         print(ginput_ids)
-        #         ginput_tensor = torch.tensor(ginput_ids).cuda() 
-        #         #ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
-        #         glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-        #         goutputs = ggmodel(ginput_ids, labels=glabels)
-        #         gloss, glogits = goutputs[:2]
-        #         print(goutputs)
-        #         #print("BERT TEST OUT: {},{}".format(loss,logits))
-        #         classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-        #         #print(GGCLASSES[classification_index])
-        #         BERT_neg_reward = glogits[0][0].item()
-        #         #neg_values_per_command.append(BERT_neg_reward)
-        #         BERT_pos_reward = glogits[0][1].item()
-        #         #pos_values_per_command.append(BERT_pos_reward)
-        #         newVal = val.item() + BERT_pos_reward - BERT_neg_reward
-        #         #print(newVal)
-        #         if newVal > max_value:
-        #             max_value = newVal
-        #             max_value_index = idx
-        #         action = infos["admissible_commands"][max_value_index]
 
-       
-
-            #print("new action: {}".format(action))
-
-        #if old_action == action:
-            #bert_agreement.append(1)
-        #else:
-            #bert_agreement.append(0)
-
-        #a2c chooses an action, bert scores the choice a) if its positive add positive, b) if its negative add negative c) add both
-        #gg-ps multiplies the logits from the gg model with the probabilities for each admissible action
 
         BERT_pos_reward = 0
         BERT_neg_reward = 0
@@ -351,7 +318,7 @@ class NeuralAgent:
         self.no_train_step += 1
         
         if self.transitions:
-            if agentType == "gg-ps1":
+            if "gg-ps" in agentType:
                 for idx, val in enumerate(outputs[0][0]):
                     with torch.no_grad():
                         ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
@@ -364,48 +331,14 @@ class NeuralAgent:
                         BERT_neg_reward = glogits[0][0].item()
                         #neg_values_per_command.append(BERT_neg_reward)
                         BERT_pos_reward = glogits[0][1].item()
+
+                        mod = 1.0
+                        if agentType == "gg-ps0.5":
+                            mod = 0.5
+                        if agentType == "gg-ps0.1":
+                            mod = 0.1
                         #pos_values_per_command.append(BERT_pos_reward)
-                        newVal = val.item() * (BERT_pos_reward - BERT_neg_reward)
-                        #print(newVal)
-                        if newVal > max_value:
-                            max_value = newVal
-                            max_value_index = idx
-                action = infos["admissible_commands"][max_value_index]
-            if agentType == "gg-ps0.5":
-                for idx, val in enumerate(outputs[0][0]):
-                    with torch.no_grad():
-                        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. '+pronoun+' '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
-                        glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-                        goutputs = ggmodel(ginput_ids, labels=glabels)
-                        gloss, glogits = goutputs[:2]
-                        #print("BERT TEST OUT: {},{}".format(loss,logits))
-                        classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-                        #print(GGCLASSES[classification_index])
-                        BERT_neg_reward = glogits[0][0].item()
-                        #neg_values_per_command.append(BERT_neg_reward)
-                        BERT_pos_reward = glogits[0][1].item()
-                        #pos_values_per_command.append(BERT_pos_reward)
-                        newVal = val.item() * ((BERT_pos_reward - BERT_neg_reward) / 0.5)
-                        #print(newVal)
-                        if newVal > max_value:
-                            max_value = newVal
-                            max_value_index = idx
-                action = infos["admissible_commands"][max_value_index]
-            if agentType == "gg-ps0.1":
-                for idx, val in enumerate(outputs[0][0]):
-                    with torch.no_grad():
-                        ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. '+pronoun+' '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
-                        glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-                        goutputs = ggmodel(ginput_ids, labels=glabels)
-                        gloss, glogits = goutputs[:2]
-                        #print("BERT TEST OUT: {},{}".format(loss,logits))
-                        classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-                        #print(GGCLASSES[classification_index])
-                        BERT_neg_reward = glogits[0][0].item()
-                        #neg_values_per_command.append(BERT_neg_reward)
-                        BERT_pos_reward = glogits[0][1].item()
-                        #pos_values_per_command.append(BERT_pos_reward)
-                        newVal = val.item() * ((BERT_pos_reward - BERT_neg_reward) / 0.1)
+                        newVal = val.item() * (BERT_pos_reward - BERT_neg_reward) / mod
                         #print(newVal)
                         if newVal > max_value:
                             max_value = newVal
@@ -415,7 +348,7 @@ class NeuralAgent:
             BERT_reward = 0
 
             if agentType != "a2c" and agentType != "gg-loss" and ("gg-ps" not in agentType):
-                with torch.no_grad(): #SJF: KEY FOR SAVING MEMORY DURING INFERENCE
+                with torch.no_grad(): 
                     ginput_ids = torch.tensor(tokenizer.encode(infos["description"]+'. '+pronoun+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
                     glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
                     goutputs = ggmodel(ginput_ids, labels=glabels)
@@ -461,8 +394,6 @@ class NeuralAgent:
             # Update model
             returns, advantages = self._discount_rewards(values)
             #A2C-base, mixed binary, mixed diff, pos only, neg only
-            #with open('oldstats.csv', 'a', newline='') as file:
-            #writer = csv.writer(file)
             lx = 0.0000001
             loss = 0
             #oss = 0
@@ -539,23 +470,3 @@ for p in pronouns:
             play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=2000, verbose=True, agentType=modz, runNumber=a, pronoun=p)  # Dense rewards game.
             print("Trained in {:.2f} secs".format(time() - starttime))
             agent.test()
-#play(agent, "tw_games/cg.ulx")  # Dense rewards game.
-#play(agent, "tw_games/cg.ulx")
-# Register a text-based game as a new Gym's environment.
-# env_id = textworld.gym.register_game("tw_games/clerk_game.ulx",
-#                                      max_episode_steps=50)
-
-# env = gym.make(env_id)  # Start the environment.
-
-# obs, infos = env.reset()  # Start new episode.
-# env.render()
-
-# score, moves, done = 0, 0, False
-# while not done:
-#     command = input("> ")
-#     obs, score, done, infos = env.step(command)
-#     env.render()
-#     moves += 1
-
-# env.close()
-# print("moves: {}; score: {}".format(moves, score))

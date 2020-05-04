@@ -233,7 +233,7 @@ work_(o)_adj_type_4:operational;broken;expensive;useless;outmoded
 (f)_noun:#(f)_noun_fruit#;#(f)_noun_vegetable#;#(f)_noun_grain#;#(f)_noun_protein#;#(f)_noun_dairy#;#candy#
 (f)_noun_fruit:#fruit#;apple;banana;grape;coconut;pear;durian;#candy#;#berry#berry;berry
 (f)_noun_vegetable:broccoli;carrot;cucumber;onion;garlic clove;potato;cabbage;cauliflower;pizza;salad
-(f)_noun_grain:loaf of bread;sandwich
+(f)_noun_grain:loaf of bread;sandwich;box of donuts
 (f)_noun_protein:;legume;cashew;peanut;burger
 (f)_noun_dairy:stick of butter;fondue
 (f)_adj_good:fresh;maturing;soft;chilled;organic
