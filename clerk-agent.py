@@ -74,6 +74,9 @@ officeDesc = "This is a store room. There are many objects on the floor. There i
 storageDesc = "This is an office. There is an important form on the desk. There is food on the desk. There is a door to the east."
 #
 
+baseSentences = {'aid':["The clerk helps the person."], 'ask':["He wants to be helpful so he asks what is wrong"], 'drop':['Thinking hes done, he drops the object'], 'take':["Seeing the thing on the floor, he takes it"], 'go':["He heads in the direction of the goal"],'look':["He looks at the strange situation unfolding in the room."], 'stamp':["He stamps the ticket because that is his job"], 'wait':["The man taps his foot waiting for something"], 'eat':["He eats the food quickly but carefully"]}
+lobbyCrowdsourced = {''}
+
 def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2c", runNumber=0, pronoun="He"):
     infos_to_request = agent.infos_to_request
     infos_to_request.max_score = True  # Needed to normalize the scores.
@@ -95,7 +98,7 @@ def play(agent, path, max_step=100, nb_episodes=500, verbose=True, agentType="a2
         
     # Collect some statistics: nb_steps, final reward.
     avg_moves, avg_scores, avg_norm_scores = [], [], []
-    with open('bigger-analysis-uncluttered-4-21.csv', 'a', newline='\n') as file:
+    with open('action-phrases-vs-not.csv', 'a', newline='\n') as file:
         writer2 = csv.writer(file)
         writer2.writerow(['runNumber','agentType','no_episode','nb_moves','win','pronoun','current_reward','current_ploss','current_vloss','current_confidence','current_entropy','total_gg_pos','total_gg_neg','avg_bert_reward','avg_base_reward'])  
         for no_episode in range(nb_episodes):
@@ -176,7 +179,7 @@ class CommandScorer(torch.nn.Module):
         # Same observed state for all commands.
         cmd_selector_input = torch.stack([state_hidden] * nb_cmds, 2).to(device)  # 1 x batch x cmds x hidden
 
-        # Same command choices for the whole batch.
+
         cmds_encoding_last_states = torch.stack([cmds_encoding_last_states] * batch_size, 1).to(device)  # 1 x batch x cmds x hidden
 
         # Concatenate the observed state and command encodings.
@@ -340,7 +343,18 @@ class NeuralAgent:
             if "gg-ps" in agentType:
                 for idx, val in enumerate(outputs[0][0]):
                     with torch.no_grad():
-                        ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                        if pronoun == "crowdsourced":
+                            matched = False
+                            d = {'aid':["The clerk helps the person."], 'ask':["He wants to be helpful so he asks what is wrong"], 'drop':['Thinking hes done, he drops the object'], 'take':["Seeing the thing on the floor, he takes it"], 'go':["He heads in the direction of the goal"],'look':["He looks at the strange situation unfolding in the room."], 'stamp':["He stamps the ticket because that is his job"], 'wait':["The man taps his foot waiting for something"], 'eat':["He eats the food quickly but carefully"]}
+                            for key in d:
+                                if key in desc:
+                                    matched = True
+                                    sentence = d[key]
+                                    ginput_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0).cuda()
+                            if matched == False:
+                                ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda()
+                        else:
+                            ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
                         glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
                         goutputs = ggmodel(ginput_ids, labels=glabels)
                         gloss, glogits = goutputs[:2]
@@ -368,24 +382,35 @@ class NeuralAgent:
 
             if agentType != "a2c" and agentType != "gg-loss" and ("gg-ps" not in agentType):
                 with torch.no_grad(): 
-                    ginput_ids = torch.tensor(tokenizer.encode(desc'. '+pronoun+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
-                    glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
-                    goutputs = ggmodel(ginput_ids, labels=glabels)
-                    gloss, glogits = goutputs[:2]
-                    #print("BERT TEST OUT: {},{}".format(loss,logits))
-                    classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
-                    #print(GGCLASSES[classification_index])
-                    
-                    if GGCLASSES[classification_index] == 'negative':
-                        BERT_neg_reward = glogits[0][0].item() * -1
-                        total_gg_neg = total_gg_neg + glogits[0][0].item() * -1
-                        if agentType == "gg-mix" or agentType == "gg-mix-multi" or agentType == "gg-neg":
-                            BERT_reward = BERT_neg_reward * -1
+                    if pronoun == "crowdsourced":
+                        matched = False
+                        d = {'aid':["The clerk helps the person."], 'ask':["He wants to be helpful so he asks what is wrong"], 'drop':['Thinking hes done, he drops the object'], 'take':["Seeing the thing on the floor, he takes it"], 'go':["He heads in the direction of the goal"],'look':["He looks at the strange situation unfolding in the room."], 'stamp':["He stamps the ticket because that is his job"], 'wait':["The man taps his foot waiting for something"], 'eat':["He eats the food quickly but carefully"]}
+                        for key in d:
+                            if key in desc:
+                                matched = True
+                                sentence = d[key]
+                                ginput_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0).cuda()
+                        if matched == False:
+                            ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda()
                     else:
-                        BERT_pos_reward = glogits[0][1].item()
-                        total_gg_pos = total_gg_pos + glogits[0][0].item() 
-                        if agentType == "gg-mix" or agentType == "gg-mix-multi" or agentType == "gg-pos":
-                            BERT_reward = BERT_pos_reward
+                        ginput_ids = torch.tensor(tokenizer.encode(desc'. '+'He'+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                        glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
+                        goutputs = ggmodel(ginput_ids, labels=glabels)
+                        gloss, glogits = goutputs[:2]
+                        #print("BERT TEST OUT: {},{}".format(loss,logits))
+                        classification_index = max(range(len(glogits[0])), key=glogits[0].__getitem__)
+                        #print(GGCLASSES[classification_index])
+                        
+                        if GGCLASSES[classification_index] == 'negative':
+                            BERT_neg_reward = glogits[0][0].item() * -1
+                            total_gg_neg = total_gg_neg + glogits[0][0].item() * -1
+                            if agentType == "gg-mix" or agentType == "gg-mix-multi" or agentType == "gg-neg":
+                                BERT_reward = BERT_neg_reward * -1
+                        else:
+                            BERT_pos_reward = glogits[0][1].item()
+                            total_gg_pos = total_gg_pos + glogits[0][0].item() 
+                            if agentType == "gg-mix" or agentType == "gg-mix-multi" or agentType == "gg-pos":
+                                BERT_reward = BERT_pos_reward
 
             #reward = ((score) * 100) - (moves) + int(BERT_reward)
             reward = score + BERT_reward
@@ -473,7 +498,8 @@ class NeuralAgent:
         return action
 
 #agent = NeuralAgent()
-modzlist = ["a2c","gg-mix","gg-mix-multi","gg-pos","gg-neg","gg-loss","gg-ps1.0","gg-ps0.5","gg-ps0.1"] #policy shaping across all values, gg output as a scalar positive or negative, base a2c
+modzlist = ["a2c","gg-mix","gg-ps0.5"]
+#modzlist = ["a2c","gg-mix","gg-mix-multi","gg-pos","gg-neg","gg-loss","gg-ps1.0","gg-ps0.5","gg-ps0.1"] #policy shaping across all values, gg output as a scalar positive or negative, base a2c
 pronouns = ["He", "She", "They"]
 
 p = "He"
@@ -487,5 +513,15 @@ for a in range(5):
         agent.train()  # Tell the agent it should update its parameters.
         starttime = time()
         play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=1000, verbose=True, agentType=modz, runNumber=a, pronoun=p)  # Dense rewards game.
+        print("Trained in {:.2f} secs".format(time() - starttime))
+        agent.test()
+    for modz in modzlist:
+        from time import time
+        agent = NeuralAgent()
+
+        print("Training {} with pronoun {} run {}".format(modz,p,a))
+        agent.train()  # Tell the agent it should update its parameters.
+        starttime = time()
+        play(agent, "tw_games/cg.ulx", max_step=50, nb_episodes=1000, verbose=True, agentType=modz, runNumber=a+5, pronoun='crowdsourced')  # Dense rewards game.
         print("Trained in {:.2f} secs".format(time() - starttime))
         agent.test()
