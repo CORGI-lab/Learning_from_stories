@@ -349,7 +349,7 @@ class NeuralAgent:
                             for key in d:
                                 if key in desc:
                                     matched = True
-                                    sentence = d[key]
+                                    sentence = d[key][0]
                                     ginput_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0).cuda()
                             if matched == False:
                                 ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda()
@@ -388,12 +388,12 @@ class NeuralAgent:
                         for key in d:
                             if key in desc:
                                 matched = True
-                                sentence = d[key]
+                                sentence = d[key][0]
                                 ginput_ids = torch.tensor(tokenizer.encode(sentence, add_special_tokens=True)).unsqueeze(0).cuda()
                         if matched == False:
                             ginput_ids = torch.tensor(tokenizer.encode(desc+'. He '+infos["admissible_commands"][idx], add_special_tokens=True)).unsqueeze(0).cuda()
                     else:
-                        ginput_ids = torch.tensor(tokenizer.encode(desc'. '+'He'+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
+                        ginput_ids = torch.tensor(tokenizer.encode(desc+'. '+'He'+' '+action, add_special_tokens=True)).unsqueeze(0).cuda() # Batch size 1
                         glabels = torch.tensor([1]).unsqueeze(0).cuda()  # Batch size 1
                         goutputs = ggmodel(ginput_ids, labels=glabels)
                         gloss, glogits = goutputs[:2]
@@ -498,7 +498,7 @@ class NeuralAgent:
         return action
 
 #agent = NeuralAgent()
-modzlist = ["a2c","gg-mix","gg-ps0.5"]
+modzlist = ["gg-mix","gg-ps0.5","a2c"]
 #modzlist = ["a2c","gg-mix","gg-mix-multi","gg-pos","gg-neg","gg-loss","gg-ps1.0","gg-ps0.5","gg-ps0.1"] #policy shaping across all values, gg output as a scalar positive or negative, base a2c
 pronouns = ["He", "She", "They"]
 
